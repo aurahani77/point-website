@@ -22,6 +22,7 @@ except ImportError:
 
 sys.path.insert(0, os.path.dirname(__file__))
 from theme import SITE, ar_date, icon, page  # noqa: E402
+import legal  # noqa: E402
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 CONTENT = os.path.join(ROOT, 'content', 'posts')
@@ -241,6 +242,35 @@ def blog_index(posts, cat=None):
     return page(title, desc, url, body, schema, shown[0]['cover_abs'] if shown else SITE + '/assets/img/hero.jpg')
 
 
+def legal_page(d):
+    url = f"{SITE}/{d['slug']}/"
+    secs = d['sections']
+    prose = ''.join(f'<h2 id="l{i}">{html.escape(t)}</h2>{b}' for i, (t, b) in enumerate(secs, 1))
+    toc = ('<nav class="toc" aria-label="محتويات الصفحة"><b>في هذه الصفحة</b><ol>'
+           + ''.join(f'<li><a href="#l{i}">{html.escape(t)}</a></li>' for i, (t, _) in enumerate(secs, 1)) + '</ol></nav>')
+    other = [x for x in legal.PAGES if x is not d][0]
+    schema = {'@context': 'https://schema.org', '@graph': [
+        {'@type': 'WebPage', '@id': url + '#page', 'url': url, 'name': d['title'], 'description': d['meta'],
+         'inLanguage': 'ar', 'dateModified': legal.UPDATED, 'publisher': {'@id': SITE + '/#org'}},
+        {'@type': 'BreadcrumbList', 'itemListElement': [
+            {'@type': 'ListItem', 'position': 1, 'name': 'الرئيسية', 'item': SITE + '/'},
+            {'@type': 'ListItem', 'position': 2, 'name': d['title'], 'item': url}]}, ORG]}
+    body = f'''<section class="page-hero"><div class="container">
+<ol class="crumbs"><li><a href="/">الرئيسية</a></li><li aria-current="page">{d['title']}</li></ol>
+<span class="kicker">بوينت ماركت</span>
+<h1 style="margin-top:14px">{d['h1']}</h1>
+<p class="lead">{d['lead']}</p>
+<div class="meta-row"><span>{icon('cal', 17)}آخر تحديث: <time datetime="{legal.UPDATED}">{ar_date(legal.UPDATED)}</time></span></div>
+</div></section>
+<div class="article-wrap legal"><div class="container"><div class="article-grid">
+<article class="prose">{prose}
+<p class="legal-note">اطّلع أيضاً على <a href="/{other['slug']}/">{other['title']}</a>.</p></article>
+<aside class="aside">{toc}</aside>
+</div></div></div>'''
+    return page(f"{d['title']} | بوينت ماركت", d['meta'], url, body, schema, SITE + '/assets/img/hero.jpg') \
+        .replace('<a href="/blog/" class="active" aria-current="page">', '<a href="/blog/">')
+
+
 def not_found():
     body = f'''<section class="page-hero" style="min-height:70vh"><div class="container">
 <span class="kicker">خطأ 404</span>
@@ -323,6 +353,8 @@ def _build(out, posts, preview):
     write(f'{out}/blog/posts.json', json.dumps([{'title': p['title'], 'slug': p['slug'], 'url': f"{SITE}/blog/{p['slug']}/",
           'status': p['status'], 'date': p['date'], 'focus_keyword': p.get('focus_keyword', '')} for p in posts], ensure_ascii=False, indent=1))
     write(f'{out}/404.html', not_found())
+    for d in legal.PAGES:
+        write(f'{out}/{d["slug"]}/index.html', legal_page(d))
     if preview:
         idx = open(f'{out}/index.html', encoding='utf-8').read()
         write(f'{out}/index.html', idx.replace('<meta name="viewport"', '<meta name="robots" content="noindex">\n<meta name="viewport"'))
@@ -335,6 +367,7 @@ def _build(out, posts, preview):
     today = datetime.date.today().isoformat()
     urls = [(SITE + '/', today), (SITE + '/blog/', max([p['modified'][:10] for p in pub] or [today]))] + \
            [(f"{SITE}/blog/category/{c[0]}/", today) for c in CATS] + \
+           [(f"{SITE}/{d['slug']}/", legal.UPDATED) for d in legal.PAGES] + \
            [(f"{SITE}/blog/{p['slug']}/", p['modified'][:10]) for p in pub]
     write(f'{out}/sitemap.xml', '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
           + ''.join(f'  <url><loc>{u}</loc><lastmod>{d}</lastmod></url>\n' for u, d in urls) + '</urlset>\n')

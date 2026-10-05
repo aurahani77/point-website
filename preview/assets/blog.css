@@ -118,3 +118,5 @@ body.blog{background:#fff}
 .cat-tabs a.on{background:var(--blue);border-color:var(--blue);color:#fff}
 .cat-tabs a.on small{color:#ffffffcc}
 @media (max-width:700px){.cat-tabs a{padding:8px 15px;font-size:14px}}
+.legal .prose h2:first-child{margin-top:0}
+.legal-note{margin-top:2.4em!important;padding-top:1.4em;border-top:1px dashed var(--line);color:var(--muted);font-size:15.5px}
