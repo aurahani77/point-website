@@ -10,6 +10,7 @@
 #   PREVIEW_DIR=$HOME/public_html/test.pointmarkets.sa LIVE_DIR= /bin/bash $HOME/repositories/point-website/deploy/deploy.sh >> $HOME/point-deploy.log 2>&1
 # ------------------------------------------------------------------
 set -e
+export PATH="/usr/local/cpanel/3rdparty/bin:/usr/local/bin:/usr/bin:/bin:$PATH"
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$REPO"
 
@@ -26,9 +27,11 @@ copy() {  # copy SRC/ into DEST/ without deleting anything else in DEST
 
 if [ -n "$PREVIEW_DIR" ] && [ -d "$PREVIEW_DIR" ]; then
   copy "$REPO/preview" "$PREVIEW_DIR"
+  git log -1 --format='%h %ci %s' > "$PREVIEW_DIR/version.txt"
   echo "  preview -> $PREVIEW_DIR"
 fi
 if [ -n "$LIVE_DIR" ] && [ -d "$LIVE_DIR" ]; then
   copy "$REPO/public" "$LIVE_DIR"
+  git log -1 --format='%h %ci %s' > "$LIVE_DIR/version.txt"
   echo "  live    -> $LIVE_DIR"
 fi
