@@ -251,7 +251,24 @@ def write(path, text):
         f.write(text)
 
 
-def build(out, posts, preview):
+
+def bust_cache(out):
+    """Append ?v=<content-hash> to asset URLs so browsers fetch new CSS/JS after every change."""
+    import hashlib, glob
+    assets = ['/assets/site.css', '/assets/blog.css', '/assets/app.js']
+    ver = {}
+    for a in assets:
+        f = out + a
+        if os.path.exists(f):
+            ver[a] = hashlib.md5(open(f, 'rb').read()).hexdigest()[:8]
+    for h in glob.glob(out + '/**/*.html', recursive=True):
+        t = open(h, encoding='utf-8').read()
+        for a, v in ver.items():
+            t = t.replace('"' + a + '"', '"' + a + '?v=' + v + '"')
+        open(h, 'w', encoding='utf-8').write(t)
+
+
+def _build(out, posts, preview):
     if os.path.isdir(out):
         shutil.rmtree(out)
     shutil.copytree(STATIC, out, ignore=shutil.ignore_patterns('htaccess.tpl', '.DS_Store'))
@@ -279,6 +296,11 @@ def build(out, posts, preview):
     write(f'{out}/llms.txt', llms(pub))
     tpl = open(os.path.join(STATIC, 'htaccess.tpl'), encoding='utf-8').read()
     write(f'{out}/.htaccess', tpl.replace('{{REDIRECTS}}', redirects(pub)))
+
+
+def build(out, posts, preview):
+    _build(out, posts, preview)
+    bust_cache(out)
 
 
 def main():
