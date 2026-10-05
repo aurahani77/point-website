@@ -153,7 +153,7 @@ def article(p, all_posts, preview):
     share = quote(p['title'] + ' ' + url)
     body = f'''<section class="page-hero"><div class="container">
 <ol class="crumbs"><li><a href="/">الرئيسية</a></li><li><a href="/blog/">المدونة</a></li><li aria-current="page">{html.escape(trunc(p['title'], 48))}</li></ol>
-<span class="tag"><i></i>{html.escape(p['cat'])}</span>
+<a class="tag" href="/blog/category/{cat_slug(p)}/"><i></i>{html.escape(p['cat'])}</a>
 <h1 style="margin-top:16px">{html.escape(p['title'])}</h1>
 <div class="meta-row"><span>{icon('cal', 17)}<time datetime="{p['date'][:10]}">{ar_date(p['date'])}</time></span><span>{icon('clock', 17)}{p['mins']} دقائق قراءة</span><span>فريق بوينت ماركت</span></div>
 </div></section>
@@ -176,26 +176,60 @@ def article(p, all_posts, preview):
     return out
 
 
-def blog_index(posts):
+CATS = [('tips', 'نصائح وأدلة تسوق', 'نصائح وأدلة تسوق',
+         'نصائح وأدلة تسوق من بوينت ماركت: قوائم مقاضي جاهزة، أدلة مواسم، وأفكار عملية لتجهيز بيتك بأفضل جودة وأفضل سعر.'),
+        ('news', 'أخبار', 'أخبار بوينت',
+         'آخر أخبار بوينت ماركت: الفروع الجديدة، الشراكات، الرعايات، والفعاليات.')]
+
+
+def cat_slug(p):
+    for slug, _, cat, _ in CATS:
+        if p['cat'] == cat:
+            return slug
+    return 'tips'
+
+
+def blog_index(posts, cat=None):
+    if cat:
+        slug, label, catname, desc = cat
+        shown = [p for p in posts if cat_slug(p) == slug]
+        url = f'{SITE}/blog/category/{slug}/'
+        title = f'{label} | مدونة بوينت ماركت'
+        crumbs = f'<li><a href="/">الرئيسية</a></li><li><a href="/blog/">المدونة</a></li><li aria-current="page">{label}</li>'
+        h1 = f'{label} <em>بوينت</em>' if slug == 'news' else f'نصائح وأدلة <em>تسوق</em>'
+        lead = desc
+    else:
+        shown = posts
+        url = SITE + '/blog/'
+        title = 'مدونة بوينت ماركت | نصائح تسوق وقوائم مقاضي وأخبار بوينت'
+        desc = 'مدونة بوينت ماركت: قوائم مقاضي جاهزة، أدلة تسوق للمواسم، ونصائح عملية لتجهيز بيتك بأفضل جودة وأفضل سعر، مع آخر أخبار بوينت.'
+        crumbs = '<li><a href="/">الرئيسية</a></li><li aria-current="page">المدونة</li>'
+        h1 = 'أفكار ونصائح لتسوّق <em>أذكى</em>'
+        lead = 'قوائم مقاضي جاهزة، أدلة مواسم، ونصائح عملية لبيت سعودي مرتب، مع آخر أخبار بوينت ماركت.'
+    tabs = [('/blog/', 'الكل', len(posts), cat is None)] + \
+           [(f'/blog/category/{c[0]}/', c[1], sum(1 for p in posts if cat_slug(p) == c[0]), bool(cat) and cat[0] == c[0]) for c in CATS]
+    ON = ' class="on" aria-current="page"'
+    tabs_html = '<nav class="cat-tabs" aria-label="أقسام المدونة">' + ''.join(
+        f'<a href="{h}"{ON if on else ""}>{l} <small>{n}</small></a>' for h, l, n, on in tabs) + '</nav>'
+    crumb_items = [{'@type': 'ListItem', 'position': 1, 'name': 'الرئيسية', 'item': SITE + '/'},
+                   {'@type': 'ListItem', 'position': 2, 'name': 'المدونة', 'item': SITE + '/blog/'}]
+    if cat:
+        crumb_items.append({'@type': 'ListItem', 'position': 3, 'name': cat[1], 'item': url})
     schema = {'@context': 'https://schema.org', '@graph': [
-        {'@type': 'Blog', '@id': SITE + '/blog/#blog', 'url': SITE + '/blog/', 'name': 'مدونة بوينت ماركت',
+        {'@type': 'CollectionPage' if cat else 'Blog', '@id': url + '#page', 'url': url, 'name': title,
          'inLanguage': 'ar', 'publisher': {'@id': SITE + '/#org'},
-         'blogPost': [{'@type': 'BlogPosting', 'headline': p['title'], 'url': f"{SITE}/blog/{p['slug']}/",
-                       'datePublished': p['date'][:10], 'image': p['cover_abs']} for p in posts]},
-        {'@type': 'BreadcrumbList', 'itemListElement': [
-            {'@type': 'ListItem', 'position': 1, 'name': 'الرئيسية', 'item': SITE + '/'},
-            {'@type': 'ListItem', 'position': 2, 'name': 'المدونة', 'item': SITE + '/blog/'}]}, ORG]}
-    grid = (card(posts[0], True) + ''.join(card(p) for p in posts[1:])) if posts else '<p>لا توجد مقالات بعد.</p>'
+         ('hasPart' if cat else 'blogPost'): [{'@type': 'BlogPosting', 'headline': p['title'], 'url': f"{SITE}/blog/{p['slug']}/",
+                       'datePublished': p['date'][:10], 'image': p['cover_abs']} for p in shown]},
+        {'@type': 'BreadcrumbList', 'itemListElement': crumb_items}, ORG]}
+    grid = (card(shown[0], True) + ''.join(card(p) for p in shown[1:])) if shown else '<p>لا توجد مقالات في هذا القسم بعد.</p>'
     body = f'''<section class="page-hero"><div class="container">
-<ol class="crumbs"><li><a href="/">الرئيسية</a></li><li aria-current="page">المدونة</li></ol>
+<ol class="crumbs">{crumbs}</ol>
 <span class="kicker">مدونة بوينت</span>
-<h1 style="margin-top:14px">أفكار ونصائح<br>لتسوّق <em>أذكى</em></h1>
-<p class="lead">قوائم مقاضي جاهزة، أدلة مواسم، ونصائح عملية لبيت سعودي مرتب، مع آخر أخبار بوينت ماركت.</p>
+<h1 style="margin-top:14px">{h1}</h1>
+<p class="lead">{lead}</p>
 </div></section>
-<section class="blog-list"><div class="container"><div class="post-grid">{grid}</div></div></section>'''
-    return page('مدونة بوينت ماركت | نصائح تسوق وقوائم مقاضي وأخبار بوينت',
-                'مدونة بوينت ماركت: قوائم مقاضي جاهزة، أدلة تسوق للمواسم، ونصائح عملية لتجهيز بيتك بأفضل جودة وأفضل سعر، مع آخر أخبار بوينت.',
-                SITE + '/blog/', body, schema, posts[0]['cover_abs'] if posts else SITE + '/assets/img/hero.jpg')
+<section class="blog-list"><div class="container">{tabs_html}<div class="post-grid">{grid}</div></div></section>'''
+    return page(title, desc, url, body, schema, shown[0]['cover_abs'] if shown else SITE + '/assets/img/hero.jpg')
 
 
 def not_found():
@@ -275,6 +309,8 @@ def _build(out, posts, preview):
     for p in posts:
         write(f'{out}/blog/{p["slug"]}/index.html', article(p, posts, preview))
     write(f'{out}/blog/index.html', blog_index(posts))
+    for c in CATS:
+        write(f'{out}/blog/category/{c[0]}/index.html', blog_index(posts, c))
     write(f'{out}/blog/posts.json', json.dumps([{'title': p['title'], 'slug': p['slug'], 'url': f"{SITE}/blog/{p['slug']}/",
           'status': p['status'], 'date': p['date'], 'focus_keyword': p.get('focus_keyword', '')} for p in posts], ensure_ascii=False, indent=1))
     write(f'{out}/404.html', not_found())
@@ -289,6 +325,7 @@ def _build(out, posts, preview):
     pub = [p for p in posts if p['status'] == 'published']
     today = datetime.date.today().isoformat()
     urls = [(SITE + '/', today), (SITE + '/blog/', max([p['modified'][:10] for p in pub] or [today]))] + \
+           [(f"{SITE}/blog/category/{c[0]}/", today) for c in CATS] + \
            [(f"{SITE}/blog/{p['slug']}/", p['modified'][:10]) for p in pub]
     write(f'{out}/sitemap.xml', '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
           + ''.join(f'  <url><loc>{u}</loc><lastmod>{d}</lastmod></url>\n' for u, d in urls) + '</urlset>\n')

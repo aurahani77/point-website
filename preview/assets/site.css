@@ -48,3 +48,9 @@ footer{background:radial-gradient(circle at 85% 0,#1fc3d5 0,transparent 35%),lin
 .story-card strong{font-size:23px}
 .story-card div span{font-size:12px;padding:7px 12px}
 @media (max-width:600px){.story-copy>p{font-size:15.5px}.story-quote p{font-size:15px}.story-card{width:280px}.story-card strong{font-size:20px}}
+
+/* ===== Edits 2026-10-05 (b) ===== */
+/* Arabic letters must stay connected: no letter-spacing anywhere */
+*,*:before,*:after{letter-spacing:0!important}
+.socials a svg{display:block}
+.socials a{color:#fff}

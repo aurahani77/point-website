@@ -109,3 +109,12 @@ body.blog{background:#fff}
 }
 .post-card .tag{align-self:flex-start}
 .prose .box-title{color:var(--blue-dark);font-weight:800;font-size:1.1em;margin:0 0 8px}
+
+.page-hero h1{max-width:none}
+.cat-tabs{display:flex;flex-wrap:wrap;gap:10px;margin:0 0 30px}
+.cat-tabs a{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:999px;border:1.5px solid var(--line);background:#fff;color:var(--ink);font-size:15px;font-weight:700;transition:.2s}
+.cat-tabs a small{font-size:12px;color:var(--muted);font-weight:600}
+.cat-tabs a:hover{border-color:var(--blue);color:var(--blue)}
+.cat-tabs a.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.cat-tabs a.on small{color:#ffffffcc}
+@media (max-width:700px){.cat-tabs a{padding:8px 15px;font-size:14px}}
