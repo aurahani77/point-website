@@ -39,3 +39,12 @@ footer{background:radial-gradient(circle at 85% 0,#1fc3d5 0,transparent 35%),lin
 .logo-light img{box-shadow:0 0 0 2px #fff;border-radius:10px}
 .logo-light .logo-slogan{color:#fff;font-size:11px}
 @media (max-width:600px){.nav-cta{font-size:13px}.kicker{font-size:14px}.branches .section-head>p{font-size:15px}.footer-top b{font-size:16px}}
+/* story section text sizes */
+.story-copy>p{font-size:17px;line-height:1.95;color:#ffffffe6;max-width:520px}
+.story-quote{max-width:520px}
+.story-quote p{font-size:16.5px;line-height:1.85}
+.story-card{width:320px}
+.story-card small{font-size:13px}
+.story-card strong{font-size:23px}
+.story-card div span{font-size:12px;padding:7px 12px}
+@media (max-width:600px){.story-copy>p{font-size:15.5px}.story-quote p{font-size:15px}.story-card{width:280px}.story-card strong{font-size:20px}}
