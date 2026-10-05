@@ -36,10 +36,11 @@ Read this first in any new session. Owner: Hala (Arabic replies, concise).
   - 37 branches (33 Riyadh, 4 Jeddah; النزهة 1 + النزهة 2)
 - Blog with categories, 7 published posts + 7 drafts.
 - Privacy + terms pages, linked in the footers.
-- `/branches/` v1: city tabs, search, map buttons, GroceryStore + FAQ schema.
+- `/branches/` v2: storefront hero photo (`/assets/img/branch-front.jpg`), city + Riyadh region filter, clickable zone map, search, grouped cards, WhatsApp share, Jahez CTA, GroceryStore + FAQ schema. Region mapping is `REGION_OF` in build.py. All "الفروع" / "ابحث عن أقرب فرع" links point to /branches/.
+- Homepage scroll motion is live (`static/assets/motion.js` + "Scroll motion" block in site.css).
 
 ## In progress / next
-1. **Homepage scroll motion** (Hala chose "حركة مع السكرول"):
+1. ~~Homepage scroll motion~~ DONE. Old notes: (Hala chose "حركة مع السكرول"):
    - `static/assets/motion.js` is written but NOT wired yet.
    - To wire it: add `<script defer src="/assets/motion.js">` to `static/index.html`, add motion.js to `bust_cache`, and write the CSS:
      - `html.motion .w` word reveal (padding so Arabic marks aren't clipped)
@@ -47,7 +48,7 @@ Read this first in any new session. Owner: Hala (Arabic replies, concise).
      - `header.scrolled`
      - curtain reveal on `.quality-image`
    - Respect prefers-reduced-motion. Test with Playwright screenshots (desktop + 390px mobile).
-2. **Redesign `/branches/` from scratch**: Hala doesn't like v1. She wants a region filter like trolley.com.sa/locations.
+2. ~~Redesign `/branches/`~~ DONE (v2). Still pending:: Hala doesn't like v1. She wants a region filter like trolley.com.sa/locations.
    - Filter: city → Riyadh region (شمال/شرق/غرب/وسط/جنوب) + search.
    - The sandbox can't resolve the map short links, so regions are assigned by district knowledge. Proposed:
      - شمال: الرحمانية, المحمدية, الربيع, النفل, النزهة 1, النزهة 2, النرجس, العارض, يو ووك, الورود, الملك سلمان, أبو بكر, الياسمين, أنس بن مالك, الندى, الملقا

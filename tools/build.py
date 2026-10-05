@@ -174,7 +174,7 @@ def article(p, all_posts, preview):
 {p['body']}
 <div class="share"><span>شارك المقال:</span><a href="https://wa.me/?text={share}" target="_blank" rel="noopener">واتساب</a><a href="https://x.com/intent/post?text={share}" target="_blank" rel="noopener">X</a><a href="https://www.linkedin.com/sharing/share-offsite/?url={quote(url)}" target="_blank" rel="noopener">لينكدإن</a><button type="button" data-copy>نسخ الرابط</button></div>
 </article>
-<aside class="aside">{toc_html}<div class="cta-card"><b>كل احتياجاتك في مكان واحد</b><p>أكثر من 37 فرعاً في الرياض وجدة، بأفضل جودة وأفضل سعر.</p><a class="button yellow" href="/#branches">ابحث عن أقرب فرع {icon('arrow', 17)}</a></div></aside>
+<aside class="aside">{toc_html}<div class="cta-card"><b>كل احتياجاتك في مكان واحد</b><p>أكثر من 37 فرعاً في الرياض وجدة، بأفضل جودة وأفضل سعر.</p><a class="button yellow" href="/branches/">ابحث عن أقرب فرع {icon('arrow', 17)}</a></div></aside>
 </div></div></div>
 <section class="related"><div class="container"><div class="head"><div><span class="kicker">من المدونة</span><h2>مقالات قد تهمك</h2></div><a class="all" href="/blog/">كل المقالات {icon('arrow', 16)}</a></div><div class="post-grid">{''.join(card(o) for o in others)}</div></div></section>'''
     head = (f'<meta property="article:published_time" content="{iso(p["date"])}">\n'
