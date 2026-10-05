@@ -108,3 +108,4 @@ body.blog{background:#fff}
   .related .head{flex-direction:column;align-items:start}
 }
 .post-card .tag{align-self:flex-start}
+.prose .box-title{color:var(--blue-dark);font-weight:800;font-size:1.1em;margin:0 0 8px}
