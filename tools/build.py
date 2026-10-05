@@ -73,6 +73,10 @@ def load_posts():
     return posts, errors
 
 
+JAHEZ = 'https://jahez.go.link/1YlM4'
+JAHEZ_IMG = r'%D8%AC%D8%A7%D9%87%D8%B2'  # "جاهز" in the banner file name
+
+
 def process(body):
     toc = []
 
@@ -82,6 +86,11 @@ def process(body):
         return f'<h2{m.group(1)} id="s{i}">{m.group(2)}</h2>'
     body = re.sub(r'<h2([^>]*)>(.*?)</h2>', h2id, body, flags=re.S)
     body = re.sub(r'(<table.*?</table>)', r'<div class="table-scroll">\1</div>', body, flags=re.S)
+    # Jahez order banner: make the banner image (and the "تطبيق جاهز" mention next to it) link to the Jahez app
+    body = re.sub(r'(?<!<a href="' + re.escape(JAHEZ) + r'" target="_blank" rel="noopener">)(<img [^>]*' + JAHEZ_IMG + r'[^>]*>)',
+                  r'<a href="' + JAHEZ + r'" target="_blank" rel="noopener">\1</a>', body)
+    body = re.sub(r'(<img [^>]*' + JAHEZ_IMG + r'[^>]*>\s*</a>\s*<p[^>]*>(?:(?!</p>).)*?)تطبيق جاهز',
+                  r'\1<a href="' + JAHEZ + r'" target="_blank" rel="noopener">تطبيق جاهز</a>', body, count=1, flags=re.S)
     body = re.sub(r'<img (?![^>]*loading=)', '<img loading="lazy" ', body)
     body = re.sub(r'<a href="(https?://(?!(www\.)?pointmarkets\.sa)[^"]+)"(?![^>]*target=)',
                   r'<a href="\1" target="_blank" rel="noopener"', body)
