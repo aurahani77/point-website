@@ -1,9 +1,9 @@
 ---
 title: أفكار لانش بوكس للمدرسة لأسبوع كامل
 slug: lunch-box-school-week-ideas
-status: draft
+status: published
 date: '2026-10-01 17:45:06'
-modified: '2026-10-01 17:45:06'
+modified: '2026-10-05 15:32:56'
 category: نصائح وأدلة تسوق
 description: تعرف على أفكار لانش بوكس للمدرسة لأسبوع كامل من الأحد إلى الخميس، مع نصائح تجهيز من الليل وسناكس صحية تناسب جدول طفلك اليومي بسهولة.
 cover: https://pointmarkets.sa/wp-content/uploads/2026/10/school-lunch-box-ideas.jpg
