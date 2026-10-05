@@ -408,7 +408,7 @@ def branches_page():
 <p class="lead">{len(br)} فرعاً في الرياض وجدة. اختر مدينتك ومنطقتك، أو ابحث باسم حيّك.</p>
 <div class="br-search">{icon('search', 20)}<input type="search" placeholder="ابحث باسم الحي، مثلاً: النرجس" aria-label="ابحث عن فرع"></div>
 </div>
-<ul class="br-stats"><li><b>{len(br)}</b><span>فرعاً</span></li><li><b>{len(riyadh)}</b><span>في الرياض</span></li><li><b>{len(jeddah)}</b><span>في جدة</span></li></ul>
+<figure class="br-photo"><img src="/assets/img/branch-front.jpg" alt="واجهة أحد فروع بوينت ماركت" width="1600" height="812" fetchpriority="high"><ul class="br-stats"><li><b>{len(br)}</b><span>فرعاً</span></li><li><b>{len(riyadh)}</b><span>في الرياض</span></li><li><b>{len(jeddah)}</b><span>في جدة</span></li></ul></figure>
 </div></div></section>
 <div class="br-bar"><div class="container">
 <div class="br-city" aria-label="المدينة"><button type="button" class="on" data-city="الرياض">الرياض <small>{len(riyadh)}</small></button><button type="button" data-city="جدة">جدة <small>{len(jeddah)}</small></button></div>
