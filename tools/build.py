@@ -284,30 +284,111 @@ def load_branches():
     return out
 
 
+REGIONS = [('north', 'شمال الرياض', 'شمال'), ('east', 'شرق الرياض', 'شرق'), ('west', 'غرب الرياض', 'غرب'),
+           ('center', 'وسط الرياض', 'وسط'), ('south', 'جنوب الرياض', 'جنوب')]
+REGION_OF = {  # Riyadh district -> region (confirm uncertain ones with the client)
+    'الرحمانية': 'north', 'المحمدية': 'north', 'الربيع': 'north', 'النفل': 'north', 'النزهة 1': 'north', 'النزهة 2': 'north',
+    'النرجس': 'north', 'العارض': 'north', 'يو ووك': 'north', 'الورود': 'north', 'الملك سلمان': 'north', 'أبو بكر': 'north',
+    'الياسمين': 'north', 'أنس بن مالك': 'north', 'الندى': 'north', 'الملقا': 'north',
+    'خريص': 'east', 'الملك عبدالله': 'east', 'الروضة': 'east', 'النهضة': 'east', 'غرناطة': 'east', 'النسيم': 'east',
+    'الرمال 1': 'east', 'الرمال 2': 'east', 'المونسية': 'east', 'السلي': 'east', 'الجنادرية': 'east',
+    'لبن': 'west', 'نجم الدين': 'west', 'المزاحمية': 'west',
+    'التحلية': 'center', 'التواصل': 'center',
+    'الرفيعة': 'south',
+}
+ZONES = {  # schematic Riyadh map (viewBox 0 0 320 360): west on the left, east on the right
+    'north': 'M60 70 Q160 10 260 70 L222 128 Q160 104 98 128 Z',
+    'west': 'M60 70 L98 128 Q84 180 98 232 L60 290 Q14 180 60 70 Z',
+    'east': 'M260 70 Q306 180 260 290 L222 232 Q236 180 222 128 Z',
+    'south': 'M60 290 L98 232 Q160 256 222 232 L260 290 Q160 350 60 290 Z',
+    'center': 'M98 128 Q160 104 222 128 Q236 180 222 232 Q160 256 98 232 Q84 180 98 128 Z',
+}
+ZONE_LABEL = {'north': (160, 78), 'west': (66, 184), 'east': (254, 184), 'south': (160, 298), 'center': (160, 184)}
+
+BR_JS = r"""<script>(function(){
+var city='الرياض',region='all',q='';
+var $=function(s){return [].slice.call(document.querySelectorAll(s))};
+var cards=$('.br-card'),groups=$('.br-group'),count=document.querySelector('.br-count'),empty=document.querySelector('.br-empty'),chips=document.querySelector('.br-chips'),inp=document.querySelector('.br-search input');
+function norm(s){return s.replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').replace(/^حي\s*/,'').trim()}
+function run(){
+  var n=0;
+  cards.forEach(function(c){var ok=(q?true:c.dataset.city===city&&(city!=='الرياض'||region==='all'||c.dataset.region===region))&&(!q||norm(c.dataset.q).indexOf(q)>-1);c.hidden=!ok;if(ok)n++});
+  groups.forEach(function(g){g.hidden=!g.querySelector('.br-card:not([hidden])')});
+  empty.hidden=n>0;count.textContent=n?('عدد الفروع: '+n):'';
+  chips.classList.toggle('off',city!=='الرياض'||!!q);
+  $('.br-city button').forEach(function(b){b.classList.toggle('on',!q&&b.dataset.city===city)});
+  $('.br-chips button').forEach(function(b){b.classList.toggle('on',b.dataset.region===region)});
+  $('.br-zone,.br-zl').forEach(function(z){z.classList.toggle('on',region!=='all'&&z.dataset.region===region)});
+  $('.br-map-card').forEach(function(m){m.hidden=m.dataset.for!==city});
+  try{history.replaceState(null,'',(city==='جدة'?'#jeddah':(region!=='all'?'#'+region:location.pathname)))}catch(e){}
+}
+function top(){var m=document.querySelector('.br-main');if(m.getBoundingClientRect().top<0)scrollTo({top:m.getBoundingClientRect().top+scrollY-(innerWidth<700?200:190),behavior:'smooth'})}
+$('.br-city button').forEach(function(b){b.onclick=function(){city=b.dataset.city;region='all';q='';inp.value='';run();top()}});
+$('.br-chips button').forEach(function(b){b.onclick=function(){region=b.dataset.region;run();top()}});
+$('.br-zone,.br-zl').forEach(function(z){z.addEventListener('click',function(){city='الرياض';q='';inp.value='';region=(region===z.dataset.region?'all':z.dataset.region);run();if(innerWidth<1000)document.querySelector('.br-results').scrollIntoView({behavior:'smooth'})})});
+inp.addEventListener('input',function(e){q=norm(e.target.value);run()});
+var h=location.hash.slice(1);if(h==='jeddah')city='جدة';else if(['north','east','west','center','south'].indexOf(h)>-1)region=h;
+run();
+})();</script>"""
+
+
 def branches_page():
     br = load_branches()
+    for b in br:
+        b['region'] = REGION_OF.get(b['label'], REGION_OF.get(b['name'], 'center')) if b['city'] == 'الرياض' else ''
     url = SITE + '/branches/'
-    cities = [('الرياض', 'riyadh'), ('جدة', 'jeddah')]
-    count = {c: sum(1 for b in br if b['city'] == c) for c, _ in cities}
-    tabs = ('<div class="cat-tabs" role="tablist">'
-            f'<button type="button" class="on" data-city="all">الكل <small>{len(br)}</small></button>'
-            + ''.join(f'<button type="button" data-city="{c}">{c} <small>{count[c]}</small></button>' for c, _ in cities) + '</div>')
-    cards = ''.join(
-        f'<li class="bp-card" data-city="{b["city"]}" data-q="{html.escape(b["label"] + " " + b["city"])}">'
-        f'<span class="bp-ico">{icon("pin", 22)}</span><div class="bp-txt"><small>{b["city"]}</small><b>بوينت ماركت {html.escape(b["label"])}</b></div>'
-        f'<a class="bp-go" href="{html.escape(b["map"])}" target="_blank" rel="noopener" aria-label="الاتجاهات إلى فرع {html.escape(b["label"])}">الاتجاهات {icon("arrow", 15)}</a></li>'
-        for b in br)
+    riyadh = [b for b in br if b['city'] == 'الرياض']
+    jeddah = [b for b in br if b['city'] == 'جدة']
+    rcount = {k: sum(1 for b in riyadh if b['region'] == k) for k, _, _ in REGIONS}
+    rname = {k: n for k, n, _ in REGIONS}
+    rshort = {k: t for k, _, t in REGIONS}
+
+    def card(b, n):
+        tag = rshort[b['region']] + ' الرياض' if b['region'] else 'جدة'
+        q = html.escape(f"{b['label']} {b['city']} {tag}")
+        share = quote(f"فرع بوينت ماركت {b['label']} - {b['city']}\n{b['map']}")
+        return (f'<li class="br-card" data-city="{b["city"]}" data-region="{b["region"]}" data-q="{q}">'
+                f'<div class="br-num">{n:02d}</div>'
+                f'<div class="br-info"><small>بوينت ماركت · {tag}</small><b>{html.escape(b["label"])}</b></div>'
+                f'<div class="br-acts"><a class="br-share" href="https://wa.me/?text={share}" target="_blank" rel="noopener" aria-label="شارك موقع فرع {html.escape(b["label"])} على واتساب">{icon("wa", 18)}</a>'
+                f'<a class="br-go" href="{html.escape(b["map"])}" target="_blank" rel="noopener">الاتجاهات {icon("arrow", 15)}</a></div></li>')
+
+    groups, n = '', 0
+    for k, name, _ in REGIONS:
+        items = [b for b in riyadh if b['region'] == k]
+        if not items:
+            continue
+        cards = ''
+        for b in items:
+            n += 1
+            cards += card(b, n)
+        groups += (f'<section class="br-group" data-region="{k}"><div class="br-gh"><h2>{name}</h2><span>{len(items)} {"فرع" if len(items) in (1, 2) or len(items) > 10 else "فروع"}</span></div>'
+                   f'<ul class="br-list">{cards}</ul></section>')
+    cards = ''
+    for b in jeddah:
+        n += 1
+        cards += card(b, n)
+    groups += f'<section class="br-group" data-region="jeddah"><div class="br-gh"><h2>جدة</h2><span>{len(jeddah)} فروع</span></div><ul class="br-list">{cards}</ul></section>'
+
+    zones = ''.join(f'<path class="br-zone" data-region="{k}" d="{ZONES[k]}"><title>{rname[k]}</title></path>' for k, _, _ in REGIONS)
+    labels = ''.join(f'<g class="br-zl" data-region="{k}" transform="translate({ZONE_LABEL[k][0]} {ZONE_LABEL[k][1]})"><text class="n" y="-2">{rcount[k]}</text><text class="t" y="17">{short}</text></g>'
+                     for k, _, short in REGIONS)
+    chips = (f'<button type="button" class="on" data-region="all">كل المناطق <small>{len(riyadh)}</small></button>'
+             + ''.join(f'<button type="button" data-region="{k}">{short} <small>{rcount[k]}</small></button>' for k, _, short in REGIONS if rcount[k]))
+
     faq = [
-        ('كم عدد فروع بوينت ماركت؟', f'لدى بوينت ماركت {len(br)} فرعاً: {count["الرياض"]} فرعاً في الرياض و{count["جدة"]} فروع في جدة.'),
-        ('في أي المدن توجد فروع بوينت ماركت؟', 'تتوزع فروع بوينت ماركت على مدينتي الرياض وجدة في المملكة العربية السعودية.'),
-        ('كيف أصل إلى أقرب فرع لي؟', 'ابحث باسم الحي في هذه الصفحة، ثم اضغط «الاتجاهات» ليفتح موقع الفرع مباشرة على خرائط Google.'),
+        ('كم عدد فروع بوينت ماركت؟', f'لدى بوينت ماركت {len(br)} فرعاً: {len(riyadh)} فرعاً في الرياض و{len(jeddah)} فروع في جدة.'),
+        ('أين تقع فروع بوينت ماركت في الرياض؟', 'تتوزع فروع بوينت على شمال الرياض وشرقها وغربها ووسطها وجنوبها. اختر منطقتك من الفلتر لتظهر لك الفروع القريبة منك.'),
+        ('كيف أصل إلى أقرب فرع لي؟', 'اختر المدينة والمنطقة أو ابحث باسم الحي، ثم اضغط «الاتجاهات» ليفتح موقع الفرع مباشرة على خرائط Google.'),
         ('هل يمكنني طلب المقاضي من بوينت ماركت أونلاين؟', 'نعم، يمكنك طلب مقاضيك من بوينت ماركت عبر تطبيق جاهز لتصلك إلى باب بيتك.'),
     ]
     faq_html = ''.join(f'<details class="faq-item"><summary>{q}</summary><p>{a}</p></details>' for q, a in faq)
     stores = [{'@type': 'GroceryStore', 'name': f"بوينت ماركت - {b['label']}", 'hasMap': b['map'],
-               'address': {'@type': 'PostalAddress', 'addressLocality': b['city'], 'addressRegion': 'منطقة الرياض' if b['city'] == 'الرياض' else 'منطقة مكة المكرمة',
-                           'streetAddress': f"حي {b['name']}" if not re.search(r'(يو ووك|طريق|شارع)', b['name']) else b['name'], 'addressCountry': 'SA'},
-               'parentOrganization': {'@id': SITE + '/#org'}, 'url': url} for b in br]
+               'address': {'@type': 'PostalAddress', 'addressLocality': b['city'],
+                           'addressRegion': 'منطقة الرياض' if b['city'] == 'الرياض' else 'منطقة مكة المكرمة',
+                           'streetAddress': b['name'] if re.search(r'(يو ووك|أبو بكر|أنس بن مالك|نجم الدين|التحلية)', b['name']) else 'حي ' + re.sub(r' [0-9]$', '', b['name']),
+                           'addressCountry': 'SA'},
+               'parentOrganization': {'@id': SITE + '/#org'}} for b in br]
     schema = {'@context': 'https://schema.org', '@graph': [
         {'@type': 'CollectionPage', '@id': url + '#page', 'url': url, 'name': 'فروع بوينت ماركت', 'inLanguage': 'ar',
          'publisher': {'@id': SITE + '/#org'},
@@ -317,25 +398,34 @@ def branches_page():
         {'@type': 'BreadcrumbList', 'itemListElement': [
             {'@type': 'ListItem', 'position': 1, 'name': 'الرئيسية', 'item': SITE + '/'},
             {'@type': 'ListItem', 'position': 2, 'name': 'الفروع', 'item': url}]}, ORG]}
-    body = f"""<section class="page-hero"><div class="container">
+
+    jed_names = '، '.join(b['label'] for b in jeddah)
+    body = f"""<section class="br-hero"><div class="container">
 <ol class="crumbs"><li><a href="/">الرئيسية</a></li><li aria-current="page">الفروع</li></ol>
+<div class="br-hero-grid"><div>
 <span class="kicker">فروعنا</span>
-<h1 style="margin-top:14px">فروع بوينت <em>ماركت</em></h1>
-<p class="lead">{len(br)} فرعاً في الرياض وجدة. ابحث عن حيّك وافتح موقع الفرع على الخريطة مباشرة.</p>
+<h1>بوينت، <em>أقرب إليك</em></h1>
+<p class="lead">{len(br)} فرعاً في الرياض وجدة. اختر مدينتك ومنطقتك، أو ابحث باسم حيّك.</p>
+<div class="br-search">{icon('search', 20)}<input type="search" placeholder="ابحث باسم الحي، مثلاً: النرجس" aria-label="ابحث عن فرع"></div>
+</div>
+<ul class="br-stats"><li><b>{len(br)}</b><span>فرعاً</span></li><li><b>{len(riyadh)}</b><span>في الرياض</span></li><li><b>{len(jeddah)}</b><span>في جدة</span></li></ul>
+</div></div></section>
+<div class="br-bar"><div class="container">
+<div class="br-city" aria-label="المدينة"><button type="button" class="on" data-city="الرياض">الرياض <small>{len(riyadh)}</small></button><button type="button" data-city="جدة">جدة <small>{len(jeddah)}</small></button></div>
+<div class="br-chips" aria-label="المنطقة">{chips}</div>
+</div></div>
+<section class="br-main"><div class="container br-layout">
+<aside class="br-map">
+<div class="br-map-card" data-for="الرياض"><b>اختر منطقتك في الرياض</b><svg viewBox="0 0 320 360" role="img" aria-label="خريطة مناطق الرياض">{zones}{labels}</svg><p>اضغط على المنطقة لعرض فروعها</p></div>
+<div class="br-map-card br-jed" data-for="جدة" hidden><b>فروع جدة</b><div class="br-jed-art">{icon('pin', 54)}</div><p>{len(jeddah)} فروع في جدة: {jed_names}.</p></div>
+<div class="br-jahez"><b>ما تقدر توصل الفرع؟</b><p>اطلب مقاضيك من بوينت عبر تطبيق جاهز.</p><a class="button yellow" href="{JAHEZ}" target="_blank" rel="noopener">اطلب عبر جاهز {icon('arrow', 17)}</a></div>
+</aside>
+<div class="br-results"><p class="br-count" aria-live="polite"></p>{groups}<p class="br-empty" hidden>ما لقينا فرع بهذا الاسم. جرّب اسم حي ثاني أو غيّر المنطقة.</p></div>
 </div></section>
-<section class="branches-page"><div class="container">
-<div class="bp-tools">{tabs}<div class="bp-search">{icon('search', 18)}<input type="search" placeholder="ابحث باسم الحي، مثلاً: النرجس" aria-label="ابحث عن فرع"></div></div>
-<ul class="bp-list">{cards}</ul>
-<p class="bp-empty" hidden>لا يوجد فرع بهذا الاسم. جرّب اسم حي آخر.</p>
-<div class="bp-cta"><div><b>ما تقدر توصل الفرع؟</b><p>اطلب مقاضيك من بوينت ماركت عبر تطبيق جاهز وتوصلك لباب البيت.</p></div><a class="button yellow" href="{JAHEZ}" target="_blank" rel="noopener">اطلب عبر جاهز {icon('arrow', 17)}</a></div>
-<div class="bp-faq"><h2>أسئلة شائعة عن الفروع</h2>{faq_html}</div>
-</div></section>
-<script>(function(){{var cur='all',q='',cards=[].slice.call(document.querySelectorAll('.bp-card')),empty=document.querySelector('.bp-empty');
-function run(){{var n=0;cards.forEach(function(c){{var ok=(cur==='all'||c.dataset.city===cur)&&(!q||c.dataset.q.indexOf(q)>-1);c.hidden=!ok;if(ok)n++}});empty.hidden=n>0}}
-document.querySelectorAll('.bp-tools [data-city]').forEach(function(b){{b.addEventListener('click',function(){{document.querySelectorAll('.bp-tools [data-city]').forEach(function(x){{x.classList.remove('on')}});b.classList.add('on');cur=b.dataset.city;run()}})}});
-document.querySelector('.bp-search input').addEventListener('input',function(e){{q=e.target.value.trim().replace(/^حي\\s*/,'');run()}});}})();</script>"""
-    return page('فروع بوينت ماركت في الرياض وجدة | مواقع الفروع على الخريطة',
-                f'تعرّف على فروع بوينت ماركت: {len(br)} فرعاً في الرياض وجدة. ابحث عن أقرب فرع لك وافتح موقعه على خرائط Google مباشرة.',
+<section class="br-faq"><div class="container"><h2>أسئلة شائعة عن الفروع</h2>{faq_html}</div></section>
+""" + BR_JS
+    return page('فروع بوينت ماركت في الرياض وجدة | ابحث عن أقرب فرع',
+                f'فروع بوينت ماركت: {len(br)} فرعاً في الرياض وجدة. اختر منطقتك في الرياض (شمال، شرق، غرب، وسط، جنوب) أو ابحث باسم الحي وافتح موقع الفرع على خرائط Google.',
                 url, body, schema, SITE + '/assets/img/store.jpg').replace('<a href="/blog/" class="active" aria-current="page">', '<a href="/blog/">') \
         .replace('<a href="/branches/">الفروع', '<a href="/branches/" class="active" aria-current="page">الفروع', 1)
 
