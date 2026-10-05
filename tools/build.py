@@ -261,7 +261,8 @@ def build(out, posts, preview):
     if preview:
         idx = open(f'{out}/index.html', encoding='utf-8').read()
         write(f'{out}/index.html', idx.replace('<meta name="viewport"', '<meta name="robots" content="noindex">\n<meta name="viewport"'))
-        write(f'{out}/robots.txt', 'User-agent: *\nDisallow: /\n')
+        # noindex is enforced by meta tag + X-Robots-Tag header (crawlers must be allowed to see it)
+        write(f'{out}/robots.txt', 'User-agent: *\nAllow: /\n')
         write(f'{out}/.htaccess', 'Options -Indexes\nDirectoryIndex index.html\nErrorDocument 404 /404.html\n'
               'AddDefaultCharset UTF-8\nAddType font/woff2 .woff2\n<IfModule mod_headers.c>\nHeader set X-Robots-Tag "noindex, nofollow"\n</IfModule>\n')
         return
