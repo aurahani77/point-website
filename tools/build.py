@@ -271,6 +271,75 @@ def legal_page(d):
         .replace('<a href="/blog/" class="active" aria-current="page">', '<a href="/blog/">')
 
 
+def load_branches():
+    """Single source of truth: the branch list inside the homepage bundle (static/assets/app.js)."""
+    a = open(os.path.join(STATIC, 'assets', 'app.js'), encoding='utf-8').read()
+    rows = re.findall(r'\["(الرياض|جدة)","([^"]+)","(https://[^"]+)"\]', a)
+    seen, out = {}, []
+    for city, name, url in rows:
+        seen[name] = seen.get(name, 0) + 1
+        out.append({'city': city, 'name': name, 'map': url, 'n': seen[name]})
+    for b in out:  # disambiguate duplicate district names (e.g. two branches in النزهة)
+        b['label'] = f"{b['name']} {b['n']}" if seen[b['name']] > 1 and not re.search(r'\d$', b['name']) else b['name']
+    return out
+
+
+def branches_page():
+    br = load_branches()
+    url = SITE + '/branches/'
+    cities = [('الرياض', 'riyadh'), ('جدة', 'jeddah')]
+    count = {c: sum(1 for b in br if b['city'] == c) for c, _ in cities}
+    tabs = ('<div class="cat-tabs" role="tablist">'
+            f'<button type="button" class="on" data-city="all">الكل <small>{len(br)}</small></button>'
+            + ''.join(f'<button type="button" data-city="{c}">{c} <small>{count[c]}</small></button>' for c, _ in cities) + '</div>')
+    cards = ''.join(
+        f'<li class="bp-card" data-city="{b["city"]}" data-q="{html.escape(b["label"] + " " + b["city"])}">'
+        f'<span class="bp-ico">{icon("pin", 22)}</span><div class="bp-txt"><small>{b["city"]}</small><b>بوينت ماركت {html.escape(b["label"])}</b></div>'
+        f'<a class="bp-go" href="{html.escape(b["map"])}" target="_blank" rel="noopener" aria-label="الاتجاهات إلى فرع {html.escape(b["label"])}">الاتجاهات {icon("arrow", 15)}</a></li>'
+        for b in br)
+    faq = [
+        ('كم عدد فروع بوينت ماركت؟', f'لدى بوينت ماركت {len(br)} فرعاً: {count["الرياض"]} فرعاً في الرياض و{count["جدة"]} فروع في جدة.'),
+        ('في أي المدن توجد فروع بوينت ماركت؟', 'تتوزع فروع بوينت ماركت على مدينتي الرياض وجدة في المملكة العربية السعودية.'),
+        ('كيف أصل إلى أقرب فرع لي؟', 'ابحث باسم الحي في هذه الصفحة، ثم اضغط «الاتجاهات» ليفتح موقع الفرع مباشرة على خرائط Google.'),
+        ('هل يمكنني طلب المقاضي من بوينت ماركت أونلاين؟', 'نعم، يمكنك طلب مقاضيك من بوينت ماركت عبر تطبيق جاهز لتصلك إلى باب بيتك.'),
+    ]
+    faq_html = ''.join(f'<details class="faq-item"><summary>{q}</summary><p>{a}</p></details>' for q, a in faq)
+    stores = [{'@type': 'GroceryStore', 'name': f"بوينت ماركت - {b['label']}", 'hasMap': b['map'],
+               'address': {'@type': 'PostalAddress', 'addressLocality': b['city'], 'addressRegion': 'منطقة الرياض' if b['city'] == 'الرياض' else 'منطقة مكة المكرمة',
+                           'streetAddress': f"حي {b['name']}" if not re.search(r'(يو ووك|طريق|شارع)', b['name']) else b['name'], 'addressCountry': 'SA'},
+               'parentOrganization': {'@id': SITE + '/#org'}, 'url': url} for b in br]
+    schema = {'@context': 'https://schema.org', '@graph': [
+        {'@type': 'CollectionPage', '@id': url + '#page', 'url': url, 'name': 'فروع بوينت ماركت', 'inLanguage': 'ar',
+         'publisher': {'@id': SITE + '/#org'},
+         'mainEntity': {'@type': 'ItemList', 'numberOfItems': len(br),
+                        'itemListElement': [{'@type': 'ListItem', 'position': i, 'item': st} for i, st in enumerate(stores, 1)]}},
+        {'@type': 'FAQPage', 'mainEntity': [{'@type': 'Question', 'name': q, 'acceptedAnswer': {'@type': 'Answer', 'text': a}} for q, a in faq]},
+        {'@type': 'BreadcrumbList', 'itemListElement': [
+            {'@type': 'ListItem', 'position': 1, 'name': 'الرئيسية', 'item': SITE + '/'},
+            {'@type': 'ListItem', 'position': 2, 'name': 'الفروع', 'item': url}]}, ORG]}
+    body = f"""<section class="page-hero"><div class="container">
+<ol class="crumbs"><li><a href="/">الرئيسية</a></li><li aria-current="page">الفروع</li></ol>
+<span class="kicker">فروعنا</span>
+<h1 style="margin-top:14px">فروع بوينت <em>ماركت</em></h1>
+<p class="lead">{len(br)} فرعاً في الرياض وجدة. ابحث عن حيّك وافتح موقع الفرع على الخريطة مباشرة.</p>
+</div></section>
+<section class="branches-page"><div class="container">
+<div class="bp-tools">{tabs}<div class="bp-search">{icon('search', 18)}<input type="search" placeholder="ابحث باسم الحي، مثلاً: النرجس" aria-label="ابحث عن فرع"></div></div>
+<ul class="bp-list">{cards}</ul>
+<p class="bp-empty" hidden>لا يوجد فرع بهذا الاسم. جرّب اسم حي آخر.</p>
+<div class="bp-cta"><div><b>ما تقدر توصل الفرع؟</b><p>اطلب مقاضيك من بوينت ماركت عبر تطبيق جاهز وتوصلك لباب البيت.</p></div><a class="button yellow" href="{JAHEZ}" target="_blank" rel="noopener">اطلب عبر جاهز {icon('arrow', 17)}</a></div>
+<div class="bp-faq"><h2>أسئلة شائعة عن الفروع</h2>{faq_html}</div>
+</div></section>
+<script>(function(){{var cur='all',q='',cards=[].slice.call(document.querySelectorAll('.bp-card')),empty=document.querySelector('.bp-empty');
+function run(){{var n=0;cards.forEach(function(c){{var ok=(cur==='all'||c.dataset.city===cur)&&(!q||c.dataset.q.indexOf(q)>-1);c.hidden=!ok;if(ok)n++}});empty.hidden=n>0}}
+document.querySelectorAll('.bp-tools [data-city]').forEach(function(b){{b.addEventListener('click',function(){{document.querySelectorAll('.bp-tools [data-city]').forEach(function(x){{x.classList.remove('on')}});b.classList.add('on');cur=b.dataset.city;run()}})}});
+document.querySelector('.bp-search input').addEventListener('input',function(e){{q=e.target.value.trim().replace(/^حي\\s*/,'');run()}});}})();</script>"""
+    return page('فروع بوينت ماركت في الرياض وجدة | مواقع الفروع على الخريطة',
+                f'تعرّف على فروع بوينت ماركت: {len(br)} فرعاً في الرياض وجدة. ابحث عن أقرب فرع لك وافتح موقعه على خرائط Google مباشرة.',
+                url, body, schema, SITE + '/assets/img/store.jpg').replace('<a href="/blog/" class="active" aria-current="page">', '<a href="/blog/">') \
+        .replace('<a href="/branches/">الفروع', '<a href="/branches/" class="active" aria-current="page">الفروع', 1)
+
+
 def not_found():
     body = f'''<section class="page-hero" style="min-height:70vh"><div class="container">
 <span class="kicker">خطأ 404</span>
@@ -355,6 +424,7 @@ def _build(out, posts, preview):
     write(f'{out}/404.html', not_found())
     for d in legal.PAGES:
         write(f'{out}/{d["slug"]}/index.html', legal_page(d))
+    write(f'{out}/branches/index.html', branches_page())
     if preview:
         idx = open(f'{out}/index.html', encoding='utf-8').read()
         write(f'{out}/index.html', idx.replace('<meta name="viewport"', '<meta name="robots" content="noindex">\n<meta name="viewport"'))
@@ -367,7 +437,7 @@ def _build(out, posts, preview):
     today = datetime.date.today().isoformat()
     urls = [(SITE + '/', today), (SITE + '/blog/', max([p['modified'][:10] for p in pub] or [today]))] + \
            [(f"{SITE}/blog/category/{c[0]}/", today) for c in CATS] + \
-           [(f"{SITE}/{d['slug']}/", legal.UPDATED) for d in legal.PAGES] + \
+           [(f"{SITE}/{d['slug']}/", legal.UPDATED) for d in legal.PAGES] + [(SITE + '/branches/', today)] + \
            [(f"{SITE}/blog/{p['slug']}/", p['modified'][:10]) for p in pub]
     write(f'{out}/sitemap.xml', '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
           + ''.join(f'  <url><loc>{u}</loc><lastmod>{d}</lastmod></url>\n' for u, d in urls) + '</urlset>\n')

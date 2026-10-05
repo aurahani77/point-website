@@ -54,3 +54,6 @@ footer{background:radial-gradient(circle at 85% 0,#1fc3d5 0,transparent 35%),lin
 *,*:before,*:after{letter-spacing:0!important}
 .socials a svg{display:block}
 .socials a{color:#fff}
+.all-branches{display:inline-flex;align-items:center;gap:8px;margin-top:6px;color:var(--blue);font-weight:800;font-size:15.5px}
+.all-branches svg{transform:rotate(180deg)}
+.all-branches:hover{color:var(--blue-dark)}
