@@ -320,6 +320,7 @@ function run(){
   $('.br-chips button').forEach(function(b){b.classList.toggle('on',b.dataset.region===region)});
   $('.br-zone,.br-zl').forEach(function(z){z.classList.toggle('on',region!=='all'&&z.dataset.region===region)});
   $('.br-map-card').forEach(function(m){m.hidden=m.dataset.for!==city});
+  if(window.brMapSync)brMapSync(city,region);
   try{history.replaceState(null,'',(city==='جدة'?'#jeddah':(region!=='all'?'#'+region:location.pathname)))}catch(e){}
 }
 function top(){var m=document.querySelector('.br-main');if(m.getBoundingClientRect().top<0)scrollTo({top:m.getBoundingClientRect().top+scrollY-(innerWidth<700?200:190),behavior:'smooth'})}
@@ -327,8 +328,47 @@ $('.br-city button').forEach(function(b){b.onclick=function(){city=b.dataset.cit
 $('.br-chips button').forEach(function(b){b.onclick=function(){region=b.dataset.region;run();top()}});
 $('.br-zone,.br-zl').forEach(function(z){z.addEventListener('click',function(){city='الرياض';q='';inp.value='';region=(region===z.dataset.region?'all':z.dataset.region);run();if(innerWidth<1000)document.querySelector('.br-results').scrollIntoView({behavior:'smooth'})})});
 inp.addEventListener('input',function(e){q=norm(e.target.value);run()});
+window.brSet=function(k){city='الرياض';q='';inp.value='';region=(region===k?'all':k);run();top()};
 var h=location.hash.slice(1);if(h==='jeddah')city='جدة';else if(['north','east','west','center','south'].indexOf(h)>-1)region=h;
 run();
+})();</script>"""
+
+
+BR_MAP_JS = r"""<script src="/assets/vendor/leaflet/leaflet.js"></script>
+<script>(function(){
+if(!window.L||!document.getElementById('br-leaflet'))return;
+var counts=__COUNTS__;
+var names={north:'شمال',east:'شرق',west:'غرب',center:'وسط',south:'جنوب'};
+var Z={ /* approximate Riyadh sectors (lat,lng) */
+ north:[[24.75,46.52],[24.93,46.52],[24.93,46.83],[24.80,46.83],[24.80,46.76],[24.75,46.76]],
+ east:[[24.60,46.76],[24.80,46.76],[24.80,46.99],[24.60,46.99]],
+ west:[[24.55,46.44],[24.75,46.44],[24.75,46.62],[24.55,46.62]],
+ center:[[24.655,46.62],[24.75,46.62],[24.75,46.76],[24.655,46.76]],
+ south:[[24.50,46.62],[24.655,46.62],[24.655,46.76],[24.60,46.76],[24.60,46.83],[24.50,46.83]]
+};
+var el=document.getElementById('br-leaflet');el.parentNode.classList.add('has-map');
+var map=L.map(el,{zoomSnap:.25,zoomControl:false,scrollWheelZoom:false,attributionControl:true,dragging:!L.Browser.mobile,tap:false});
+L.control.zoom({position:'bottomleft'}).addTo(map);
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:16,attribution:'&copy; OpenStreetMap &copy; CARTO'}).addTo(map);
+var layers={},group=L.featureGroup().addTo(map);
+var base={color:'#ffffff',weight:2,fillColor:'#11a9c3',fillOpacity:.22};
+Object.keys(Z).forEach(function(k){
+  if(!counts[k])return;
+  var p=L.polygon(Z[k],base).addTo(group);
+  p.bindTooltip('<b>'+counts[k]+'</b><span>'+names[k]+'</span>',{permanent:true,direction:'center',className:'br-tip'});
+  p.on('mouseover',function(){if(!p._on)p.setStyle({fillOpacity:.38})});
+  p.on('mouseout',function(){if(!p._on)p.setStyle({fillOpacity:.22})});
+  p.on('click',function(){window.brSet&&brSet(k)});
+  layers[k]=p;
+});
+map.fitBounds(group.getBounds(),{padding:[2,2]});
+window.brMapSync=function(city,region){
+  Object.keys(layers).forEach(function(k){var on=region===k;layers[k]._on=on;
+    layers[k].setStyle(on?{fillColor:'#f5c400',fillOpacity:.55,color:'#ffffff',weight:3}:base);
+    var t=layers[k].getTooltip();t&&t.getElement&&t.getElement()&&t.getElement().classList.toggle('on',on);});
+  if(city==='الرياض')setTimeout(function(){map.invalidateSize()},50);
+};
+var h=location.hash.slice(1);brMapSync('الرياض',layers[h]?h:'all');
 })();</script>"""
 
 
@@ -416,17 +456,17 @@ def branches_page():
 </div></div>
 <section class="br-main"><div class="container br-layout">
 <aside class="br-map">
-<div class="br-map-card" data-for="الرياض"><b>اختر منطقتك في الرياض</b><svg viewBox="0 0 320 360" role="img" aria-label="خريطة مناطق الرياض">{zones}{labels}</svg><p>اضغط على المنطقة لعرض فروعها</p></div>
+<div class="br-map-card" data-for="الرياض"><b>اختر منطقتك في الرياض</b><div class="br-leaflet" id="br-leaflet" role="application" aria-label="خريطة مناطق الرياض"></div><svg class="br-fallback" viewBox="0 0 320 360" role="img" aria-label="خريطة مناطق الرياض">{zones}{labels}</svg><p>اضغط على المنطقة لعرض فروعها · حدود المناطق تقريبية</p></div>
 <div class="br-map-card br-jed" data-for="جدة" hidden><b>فروع جدة</b><div class="br-jed-art">{icon('pin', 54)}</div><p>{len(jeddah)} فروع في جدة: {jed_names}.</p></div>
 <div class="br-jahez"><b>ما تقدر توصل الفرع؟</b><p>اطلب مقاضيك من بوينت عبر تطبيق جاهز.</p><a class="button yellow" href="{JAHEZ}" target="_blank" rel="noopener">اطلب عبر جاهز {icon('arrow', 17)}</a></div>
 </aside>
 <div class="br-results"><p class="br-count" aria-live="polite"></p>{groups}<p class="br-empty" hidden>ما لقينا فرع بهذا الاسم. جرّب اسم حي ثاني أو غيّر المنطقة.</p></div>
 </div></section>
 <section class="br-faq"><div class="container"><h2>أسئلة شائعة عن الفروع</h2>{faq_html}</div></section>
-""" + BR_JS
+""" + BR_JS + BR_MAP_JS.replace("__COUNTS__", json.dumps(rcount))
     return page('فروع بوينت ماركت في الرياض وجدة | ابحث عن أقرب فرع',
                 f'فروع بوينت ماركت: {len(br)} فرعاً في الرياض وجدة. اختر منطقتك في الرياض (شمال، شرق، غرب، وسط، جنوب) أو ابحث باسم الحي وافتح موقع الفرع على خرائط Google.',
-                url, body, schema, SITE + '/assets/img/store.jpg').replace('<a href="/blog/" class="active" aria-current="page">', '<a href="/blog/">') \
+                url, body, schema, SITE + '/assets/img/store.jpg', extra_head='<link rel="stylesheet" href="/assets/vendor/leaflet/leaflet.css">\n').replace('<a href="/blog/" class="active" aria-current="page">', '<a href="/blog/">') \
         .replace('<a href="/branches/">الفروع', '<a href="/branches/" class="active" aria-current="page">الفروع', 1)
 
 

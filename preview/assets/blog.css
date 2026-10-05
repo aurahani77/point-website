@@ -235,3 +235,13 @@ body.blog{background:#fff}
 .br-photo .br-stats span{color:var(--muted)}
 @media (max-width:1000px){.br-hero-grid{flex-direction:column;align-items:stretch}.br-photo{flex:none}}
 @media (max-width:700px){.br-photo img{border-radius:120px 120px 22px 22px;aspect-ratio:4/3}.br-photo .br-stats{width:calc(100% - 24px)}.br-photo .br-stats li{min-width:0;padding:10px 6px}}
+.br-leaflet{direction:ltr;display:none;height:380px;border-radius:18px;overflow:hidden;margin-top:10px;background:#e8f6f9;z-index:0}
+.has-map .br-leaflet{display:block}
+.has-map .br-fallback{display:none!important}
+.br-leaflet .leaflet-tooltip.br-tip{direction:rtl;background:#fff;border:0;border-radius:12px;padding:5px 10px;box-shadow:0 8px 20px #004f6126;font-family:var(--font);text-align:center;line-height:1.15;pointer-events:none}
+.br-leaflet .leaflet-tooltip.br-tip:before{display:none}
+.br-tip b{display:block;font-size:17px;color:var(--ink)}
+.br-tip span{display:block;font-size:11.5px;color:var(--muted);font-weight:700}
+.br-leaflet .leaflet-tooltip.br-tip.on{background:#073c49}.br-tip.on b,.br-tip.on span{color:#fff}
+.br-leaflet .leaflet-control-attribution{font-size:9px}
+.br-leaflet path.leaflet-interactive{cursor:pointer;transition:fill-opacity .2s}
