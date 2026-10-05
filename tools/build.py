@@ -112,7 +112,8 @@ def enrich(p):
              mins=int(p.get('reading_minutes') or max(2, round(words / 200))),
              excerpt=trunc(p.get('excerpt') or p['description'], 140),
              cat=p.get('category') or 'نصائح وأدلة تسوق',
-             cover_alt=p.get('cover_alt') or p['title'])
+             cover_alt=p.get('cover_alt') or p['title'],
+             cover_abs=p['cover'] if str(p['cover']).startswith('http') else SITE + '/' + str(p['cover']).lstrip('/'))
     return p
 
 
@@ -137,7 +138,7 @@ def article(p, all_posts, preview):
         toc_html = ('<nav class="toc" aria-label="محتويات المقال"><b>في هذا المقال</b><ol>'
                     + ''.join(f'<li><a href="#{i}">{html.escape(t)}</a></li>' for i, t in p['toc']) + '</ol></nav>')
     art = {'@type': 'BlogPosting', '@id': url + '#article', 'mainEntityOfPage': url, 'headline': p['title'],
-           'description': p['description'], 'image': [p['cover']], 'datePublished': iso(p['date']),
+           'description': p['description'], 'image': [p['cover_abs']], 'datePublished': iso(p['date']),
            'dateModified': iso(p['modified']), 'inLanguage': 'ar', 'author': {'@id': SITE + '/#org'},
            'publisher': {'@id': SITE + '/#org'}, 'articleSection': p['cat'], 'wordCount': p['words']}
     if p.get('focus_keyword'):
@@ -169,7 +170,7 @@ def article(p, all_posts, preview):
     head = (f'<meta property="article:published_time" content="{iso(p["date"])}">\n'
             f'<meta property="article:modified_time" content="{iso(p["modified"])}">\n')
     out = page(f"{p['title']} | بوينت ماركت", p['description'], url, body,
-               {'@context': 'https://schema.org', '@graph': graph}, p['cover'], 'article', head)
+               {'@context': 'https://schema.org', '@graph': graph}, p['cover_abs'], 'article', head)
     if p['status'] == 'draft':
         out = out.replace('</body>', DRAFT_BANNER + '\n</body>')
     return out
@@ -180,7 +181,7 @@ def blog_index(posts):
         {'@type': 'Blog', '@id': SITE + '/blog/#blog', 'url': SITE + '/blog/', 'name': 'مدونة بوينت ماركت',
          'inLanguage': 'ar', 'publisher': {'@id': SITE + '/#org'},
          'blogPost': [{'@type': 'BlogPosting', 'headline': p['title'], 'url': f"{SITE}/blog/{p['slug']}/",
-                       'datePublished': p['date'][:10], 'image': p['cover']} for p in posts]},
+                       'datePublished': p['date'][:10], 'image': p['cover_abs']} for p in posts]},
         {'@type': 'BreadcrumbList', 'itemListElement': [
             {'@type': 'ListItem', 'position': 1, 'name': 'الرئيسية', 'item': SITE + '/'},
             {'@type': 'ListItem', 'position': 2, 'name': 'المدونة', 'item': SITE + '/blog/'}]}, ORG]}
@@ -194,7 +195,7 @@ def blog_index(posts):
 <section class="blog-list"><div class="container"><div class="post-grid">{grid}</div></div></section>'''
     return page('مدونة بوينت ماركت | نصائح تسوق وقوائم مقاضي وأخبار بوينت',
                 'مدونة بوينت ماركت: قوائم مقاضي جاهزة، أدلة تسوق للمواسم، ونصائح عملية لتجهيز بيتك بأفضل جودة وأفضل سعر، مع آخر أخبار بوينت.',
-                SITE + '/blog/', body, schema, posts[0]['cover'] if posts else SITE + '/assets/img/hero.jpg')
+                SITE + '/blog/', body, schema, posts[0]['cover_abs'] if posts else SITE + '/assets/img/hero.jpg')
 
 
 def not_found():
@@ -257,6 +258,8 @@ def build(out, posts, preview):
     for p in posts:
         write(f'{out}/blog/{p["slug"]}/index.html', article(p, posts, preview))
     write(f'{out}/blog/index.html', blog_index(posts))
+    write(f'{out}/blog/posts.json', json.dumps([{'title': p['title'], 'slug': p['slug'], 'url': f"{SITE}/blog/{p['slug']}/",
+          'status': p['status'], 'date': p['date'], 'focus_keyword': p.get('focus_keyword', '')} for p in posts], ensure_ascii=False, indent=1))
     write(f'{out}/404.html', not_found())
     if preview:
         idx = open(f'{out}/index.html', encoding='utf-8').read()
