@@ -314,7 +314,7 @@ function run(){
   var n=0;
   cards.forEach(function(c){var ok=(q?true:c.dataset.city===city&&(city!=='الرياض'||region==='all'||c.dataset.region===region))&&(!q||norm(c.dataset.q).indexOf(q)>-1);c.hidden=!ok;if(ok)n++});
   groups.forEach(function(g){g.hidden=!g.querySelector('.br-card:not([hidden])')});
-  empty.hidden=n>0;count.textContent=n?('عدد الفروع: '+n):'';
+  empty.hidden=n>0;count.textContent=n?(n+' '+(n>2&&n<11?'فروع':(n>10?'فرعاً':'فرع'))+(q?' مطابقة':(city==='جدة'?' في جدة':(region==='all'?' في الرياض':' في '+({north:'شمال',east:'شرق',west:'غرب',center:'وسط',south:'جنوب'}[region])+' الرياض')))):'';
   chips.classList.toggle('off',city!=='الرياض'||!!q);
   $('.br-city button').forEach(function(b){b.classList.toggle('on',!q&&b.dataset.city===city)});
   $('.br-chips button').forEach(function(b){b.classList.toggle('on',b.dataset.region===region)});
@@ -336,39 +336,29 @@ run();
 
 BR_MAP_JS = r"""<script src="/assets/vendor/leaflet/leaflet.js"></script>
 <script>(function(){
-if(!window.L||!document.getElementById('br-leaflet'))return;
+var el=document.getElementById('br-leaflet');if(!window.L||!el)return;
+el.parentNode.classList.add('has-map');
 var counts=__COUNTS__;
 var names={north:'شمال',east:'شرق',west:'غرب',center:'وسط',south:'جنوب'};
-var Z={ /* approximate Riyadh sectors (lat,lng) */
- north:[[24.75,46.52],[24.93,46.52],[24.93,46.83],[24.80,46.83],[24.80,46.76],[24.75,46.76]],
- east:[[24.60,46.76],[24.80,46.76],[24.80,46.99],[24.60,46.99]],
- west:[[24.55,46.44],[24.75,46.44],[24.75,46.62],[24.55,46.62]],
- center:[[24.655,46.62],[24.75,46.62],[24.75,46.76],[24.655,46.76]],
- south:[[24.50,46.62],[24.655,46.62],[24.655,46.76],[24.60,46.76],[24.60,46.83],[24.50,46.83]]
-};
-var el=document.getElementById('br-leaflet');el.parentNode.classList.add('has-map');
-var map=L.map(el,{zoomSnap:.25,zoomControl:false,scrollWheelZoom:false,attributionControl:true,dragging:!L.Browser.mobile,tap:false});
+var C={north:[24.83,46.66],east:[24.74,46.86],west:[24.63,46.55],center:[24.70,46.69],south:[24.58,46.72]}; /* approximate */
+var map=L.map(el,{zoomControl:false,scrollWheelZoom:false,dragging:!L.Browser.mobile,tap:false,zoomSnap:.25});
 L.control.zoom({position:'bottomleft'}).addTo(map);
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{subdomains:'abcd',maxZoom:16,attribution:'&copy; OpenStreetMap &copy; CARTO'}).addTo(map);
-var layers={},group=L.featureGroup().addTo(map);
-var base={color:'#ffffff',weight:2,fillColor:'#11a9c3',fillOpacity:.22};
-Object.keys(Z).forEach(function(k){
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:17,className:'br-tiles',attribution:'&copy; OpenStreetMap'}).addTo(map);
+var mk={},grp=L.featureGroup().addTo(map);
+Object.keys(C).forEach(function(k){
   if(!counts[k])return;
-  var p=L.polygon(Z[k],base).addTo(group);
-  p.bindTooltip('<b>'+counts[k]+'</b><span>'+names[k]+'</span>',{permanent:true,direction:'center',className:'br-tip'});
-  p.on('mouseover',function(){if(!p._on)p.setStyle({fillOpacity:.38})});
-  p.on('mouseout',function(){if(!p._on)p.setStyle({fillOpacity:.22})});
-  p.on('click',function(){window.brSet&&brSet(k)});
-  layers[k]=p;
+  var size=Math.round(46+Math.sqrt(counts[k])*9);
+  var m=L.marker(C[k],{icon:L.divIcon({className:'br-bub-wrap',iconSize:[size,size],iconAnchor:[size/2,size/2],
+    html:'<button type="button" class="br-bub" style="width:'+size+'px;height:'+size+'px"><b>'+counts[k]+'</b><span>'+names[k]+'</span></button>'}),keyboard:false}).addTo(grp);
+  m.on('click',function(){window.brSet&&brSet(k)});
+  mk[k]=m;
 });
-map.fitBounds(group.getBounds(),{padding:[2,2]});
+map.fitBounds(grp.getBounds(),{padding:[60,60]});
 window.brMapSync=function(city,region){
-  Object.keys(layers).forEach(function(k){var on=region===k;layers[k]._on=on;
-    layers[k].setStyle(on?{fillColor:'#f5c400',fillOpacity:.55,color:'#ffffff',weight:3}:base);
-    var t=layers[k].getTooltip();t&&t.getElement&&t.getElement()&&t.getElement().classList.toggle('on',on);});
-  if(city==='الرياض')setTimeout(function(){map.invalidateSize()},50);
+  Object.keys(mk).forEach(function(k){var e=mk[k].getElement();e&&e.classList.toggle('on',region===k);e&&e.classList.toggle('dim',region!=='all'&&region!==k)});
+  setTimeout(function(){map.invalidateSize()},60);
 };
-var h=location.hash.slice(1);brMapSync('الرياض',layers[h]?h:'all');
+var h=location.hash.slice(1);brMapSync('الرياض',mk[h]?h:'all');
 })();</script>"""
 
 
@@ -384,14 +374,13 @@ def branches_page():
     rshort = {k: t for k, _, t in REGIONS}
 
     def card(b, n):
-        tag = rshort[b['region']] + ' الرياض' if b['region'] else 'جدة'
+        tag = rname[b['region']] if b['region'] else 'جدة'
         q = html.escape(f"{b['label']} {b['city']} {tag}")
-        share = quote(f"فرع بوينت ماركت {b['label']} - {b['city']}\n{b['map']}")
         return (f'<li class="br-card" data-city="{b["city"]}" data-region="{b["region"]}" data-q="{q}">'
-                f'<div class="br-num">{n:02d}</div>'
-                f'<div class="br-info"><small>بوينت ماركت · {tag}</small><b>{html.escape(b["label"])}</b></div>'
-                f'<div class="br-acts"><a class="br-share" href="https://wa.me/?text={share}" target="_blank" rel="noopener" aria-label="شارك موقع فرع {html.escape(b["label"])} على واتساب">{icon("wa", 18)}</a>'
-                f'<a class="br-go" href="{html.escape(b["map"])}" target="_blank" rel="noopener">الاتجاهات {icon("arrow", 15)}</a></div></li>')
+                f'<a href="{html.escape(b["map"])}" target="_blank" rel="noopener" aria-label="الاتجاهات إلى بوينت ماركت {html.escape(b["label"])}">'
+                f'<span class="br-pin">{icon("pin", 18)}</span>'
+                f'<span class="br-info"><b>{html.escape(b["label"])}</b><small>{tag}</small></span>'
+                f'<span class="br-go">الاتجاهات {icon("arrow", 14)}</span></a></li>')
 
     groups, n = '', 0
     for k, name, _ in REGIONS:
@@ -455,13 +444,15 @@ def branches_page():
 <div class="br-chips" aria-label="المنطقة">{chips}</div>
 </div></div>
 <section class="br-main"><div class="container br-layout">
+<div class="br-panel"><div class="br-panel-head"><b class="br-count" aria-live="polite"></b><span>اضغط على الفرع لفتح الاتجاهات</span></div>
+<div class="br-results">{groups}<p class="br-empty" hidden>ما لقينا فرع بهذا الاسم. جرّب اسم حي ثاني أو غيّر المنطقة.</p></div></div>
 <aside class="br-map">
-<div class="br-map-card" data-for="الرياض"><b>اختر منطقتك في الرياض</b><div class="br-leaflet" id="br-leaflet" role="application" aria-label="خريطة مناطق الرياض"></div><svg class="br-fallback" viewBox="0 0 320 360" role="img" aria-label="خريطة مناطق الرياض">{zones}{labels}</svg><p>اضغط على المنطقة لعرض فروعها · حدود المناطق تقريبية</p></div>
-<div class="br-map-card br-jed" data-for="جدة" hidden><b>فروع جدة</b><div class="br-jed-art">{icon('pin', 54)}</div><p>{len(jeddah)} فروع في جدة: {jed_names}.</p></div>
-<div class="br-jahez"><b>ما تقدر توصل الفرع؟</b><p>اطلب مقاضيك من بوينت عبر تطبيق جاهز.</p><a class="button yellow" href="{JAHEZ}" target="_blank" rel="noopener">اطلب عبر جاهز {icon('arrow', 17)}</a></div>
+<div class="br-map-card" data-for="الرياض"><div class="br-leaflet" id="br-leaflet" role="application" aria-label="خريطة مناطق الرياض"></div><svg class="br-fallback" viewBox="0 0 320 360" role="img" aria-label="خريطة مناطق الرياض">{zones}{labels}</svg><p class="br-map-note">اضغط على المنطقة لعرض فروعها · المواقع تقريبية</p></div>
+<div class="br-map-card br-jed" data-for="جدة" hidden><div class="br-jed-art">{icon('pin', 54)}</div><b>فروع جدة</b><p>{len(jeddah)} فروع: {jed_names}.</p></div>
 </aside>
-<div class="br-results"><p class="br-count" aria-live="polite"></p>{groups}<p class="br-empty" hidden>ما لقينا فرع بهذا الاسم. جرّب اسم حي ثاني أو غيّر المنطقة.</p></div>
-</div></section>
+</div>
+<div class="container"><div class="br-jahez"><div><b>ما تقدر توصل الفرع؟</b><p>اطلب مقاضيك من بوينت عبر تطبيق جاهز، وتوصلك لباب البيت.</p></div><a class="button yellow" href="{JAHEZ}" target="_blank" rel="noopener">اطلب عبر جاهز {icon('arrow', 17)}</a></div></div>
+</section>
 <section class="br-faq"><div class="container"><h2>أسئلة شائعة عن الفروع</h2>{faq_html}</div></section>
 """ + BR_JS + BR_MAP_JS.replace("__COUNTS__", json.dumps(rcount))
     return page('فروع بوينت ماركت في الرياض وجدة | ابحث عن أقرب فرع',

@@ -245,3 +245,60 @@ body.blog{background:#fff}
 .br-leaflet .leaflet-tooltip.br-tip.on{background:#073c49}.br-tip.on b,.br-tip.on span{color:#fff}
 .br-leaflet .leaflet-control-attribution{font-size:9px}
 .br-leaflet path.leaflet-interactive{cursor:pointer;transition:fill-opacity .2s}
+/* ===== branches v3: list panel + big map ===== */
+.br-main{padding:40px 0 70px}
+.br-layout{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:24px;align-items:stretch}
+.br-panel{display:flex;flex-direction:column;height:640px;background:#fff;border:1px solid var(--line);border-radius:26px;overflow:hidden}
+.br-panel-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:20px 24px;border-bottom:1px solid var(--line)}
+.br-panel-head b.br-count{margin:0;font-size:18px;color:var(--ink)}
+.br-panel-head span{font-size:13px;color:var(--muted)}
+.br-results{flex:1;overflow-y:auto;padding:4px 0 10px;scrollbar-width:thin;scrollbar-color:#cfe9ef transparent}
+.br-group{margin:0}
+.br-group .br-gh{position:sticky;top:0;z-index:2;margin:0;padding:12px 24px 8px;background:#fffffff2;backdrop-filter:blur(6px)}
+.br-group .br-gh:after{display:none}
+.br-group h2{font-size:14px;color:var(--blue);font-weight:800}
+.br-group .br-gh span{padding:0;background:none;color:var(--muted);font-size:12.5px;font-weight:700}
+.br-list{display:block}
+.br-card{display:block;padding:0;border:0;border-radius:0;background:none;box-shadow:none!important;transform:none!important}
+.br-card a{display:flex;align-items:center;gap:14px;margin:0 12px;padding:12px;border-radius:16px;transition:background .2s}
+.br-card a:hover{background:var(--pale)}
+.br-pin{flex:none;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:var(--pale);color:var(--blue);transition:.2s}
+.br-card a:hover .br-pin{background:var(--yellow);color:var(--navy)}
+.br-info{flex:1;min-width:0;display:block}
+.br-info b{display:block;font-size:16.5px;color:var(--ink);line-height:1.4}
+.br-info small{display:block;font-size:12.5px;color:var(--muted)}
+.br-card .br-go{flex:none;display:inline-flex;align-items:center;gap:6px;height:auto;padding:0;background:none;color:var(--blue);font-size:13.5px;font-weight:800;opacity:.75;transition:.2s}
+.br-card a:hover .br-go{opacity:1}
+.br-card .br-go svg{transform:rotate(180deg)}
+.br-card+.br-card a{position:relative}
+.br-empty{margin:20px 24px}
+.br-map{position:relative;top:auto;display:block}
+.br-map-card{height:640px;padding:0;border-radius:26px;overflow:hidden;position:relative;background:#e9f6f9;text-align:center}
+.br-map-card .br-leaflet{height:100%;margin:0;border-radius:0}
+.br-map-note{position:absolute;z-index:500;top:14px;right:14px;margin:0!important;padding:8px 14px;border-radius:999px;background:#fffffff0;box-shadow:0 8px 20px #004f611f;font-size:12.5px!important;color:var(--ink)!important;font-weight:700}
+.br-fallback{max-width:320px;margin:120px auto 0}
+.br-tiles{filter:grayscale(.85) sepia(.15) hue-rotate(150deg) saturate(1.4) brightness(1.04) contrast(.95)}
+.br-bub-wrap{background:none;border:0}
+.br-bub{display:flex;flex-direction:column;align-items:center;justify-content:center;border:4px solid #fff;border-radius:50%;background:var(--blue);color:#fff;font-family:var(--font);cursor:pointer;box-shadow:0 12px 28px #00546a55;transition:transform .2s,background .2s,opacity .2s;padding:0}
+.br-bub b{font-size:20px;line-height:1}
+.br-bub span{font-size:12px;font-weight:700;opacity:.9;margin-top:2px}
+.br-bub:hover{transform:scale(1.08)}
+.br-bub-wrap.on .br-bub{background:var(--yellow);color:var(--navy);transform:scale(1.12)}
+.br-bub-wrap.dim .br-bub{opacity:.45}
+.br-jed{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:30px}
+.br-jed b{font-size:20px;color:var(--ink)}
+.br-jed p{color:var(--muted);max-width:280px}
+.br-jahez{margin-top:24px;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:26px 32px;border-radius:24px}
+.br-jahez b{font-size:22px}
+.br-jahez p{margin:6px 0 0}
+.br-jahez .button{width:auto;flex:none;padding:0 26px}
+@media (max-width:1000px){
+  .br-layout{grid-template-columns:1fr}
+  .br-panel{height:auto;max-height:none}
+  .br-results{overflow:visible}
+  .br-map{display:none}
+  .br-jahez{flex-direction:column;align-items:flex-start}
+  .br-jahez .button{width:100%}
+}
+@media (max-width:700px){.br-card a{margin:0 6px;padding:10px}.br-panel-head span{display:none}.br-group .br-gh{padding:12px 16px 6px}}
+.br-map-card[hidden]{display:none!important}
