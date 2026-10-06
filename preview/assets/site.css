@@ -88,3 +88,6 @@ html.motion .kicker:before{animation:kpulse 2.4s ease-in-out infinite}
 @keyframes kpulse{0%,100%{box-shadow:0 0 0 0 #f5c40066}50%{box-shadow:0 0 0 6px #f5c40000}}
 @media (max-width:900px){html.motion .hero .image-card{clip-path:inset(100% 0 0 0 round 160px 160px 25px 25px)}html.motion .hero.in .image-card{clip-path:inset(0 0 0 0 round 160px 160px 25px 25px)}}
 @media (prefers-reduced-motion:reduce){.scroll-progress{display:none}}
+.footer-news .news-msg{margin:10px 0 0!important;font-size:13.5px!important;color:#fff!important;font-weight:700}
+.footer-news .news-msg.err{color:#ffd84d!important}
+.footer-news button:disabled{opacity:.6;cursor:wait}

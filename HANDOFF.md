@@ -76,3 +76,10 @@ Read this first in any new session. Owner: Hala (Arabic replies, concise).
 ## Launch
 - 2026-10-06: LIVE_DIR switched to $HOME/public_html (cron). Static site served at the root; WordPress stays in place behind it (wp-admin + REST via .htaccess rewrite). Rollback: restore public_html/.htaccess-backup and delete public_html/index.html.
 - n8n workflow FP6HZkfHVrkkiR7M mirrors posts into WordPress every 15 min (published -> private, draft -> draft).
+
+## Newsletter
+- Footer form -> static/assets/newsletter.js -> n8n webhook https://aurash77.app.n8n.cloud/webhook/point-newsletter (workflow faj6RlJvjdmcned7) -> data table "Point Newsletter Subscribers" (6TiTrTORi37Jzdwr). Sending campaigns: not set up yet (suggest Brevo).
+
+## Pending from Hala (remind her)
+- Confirm branches «التواصل» (https://maps.app.goo.gl/zsEx6zg6UxziMXd3A) and «التحلية» (https://maps.app.goo.gl/v9dreRdfBjXKtMxj6): city + region.
+- Official company name + CR number for privacy/terms pages.

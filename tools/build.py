@@ -520,7 +520,7 @@ def write(path, text):
 def bust_cache(out):
     """Append ?v=<content-hash> to asset URLs so browsers fetch new CSS/JS after every change."""
     import hashlib, glob
-    assets = ['/assets/site.css', '/assets/blog.css', '/assets/app.js', '/assets/motion.js']
+    assets = ['/assets/site.css', '/assets/blog.css', '/assets/app.js', '/assets/motion.js', '/assets/newsletter.js']
     ver = {}
     for a in assets:
         f = out + a
