@@ -22,6 +22,11 @@ RewriteCond %{HTTP:X-Forwarded-Proto} !https
 RewriteCond %{HTTP:CF-Visitor} !https
 RewriteRule ^(.*)$ https://pointmarkets.sa/$1 [R=301,L]
 
+# 1b) ووردبريس يبقى شغالاً خلف الكواليس فقط: لوحة التحكم (wp-admin) + REST API لمزامنة المقالات
+RewriteRule ^wp-json/?(.*)$ /index.php?rest_route=/$1 [L,QSA]
+RewriteCond %{QUERY_STRING} !rest_route=
+RewriteRule ^index\.php$ / [R=301,L]
+
 # 2-3) مقالات ووردبريس القديمة -> روابط المدونة الجديدة (تتولد تلقائياً من content/posts)
 RewriteRule ^guest-list-shopping-10-people/?$ /blog/guest-list-shopping-10-people/ [R=301,L,NC]
 RewriteRule ^kashta-shopping-list-essentials-2/?$ /blog/kashta-shopping-list/ [R=301,L,NC]
@@ -47,12 +52,16 @@ RewriteRule ^المدونة/?$ /blog/ [R=301,L,NC]
 RewriteRule ^category/(المدونة|m|اخبار)(/.*)?$ /blog/ [R=301,L,NC]
 RewriteRule ^(feed|comments/feed)/?$ /blog/ [R=301,L,NC]
 RewriteRule ^author/.*$ /blog/ [R=301,L,NC]
-RewriteRule ^الفروع[ـ]?/?$ /#branches [R=301,L,NE,NC]
+RewriteRule ^الفروع[ـ]?/?$ /branches/ [R=301,L,NC]
 RewriteRule ^(portfolio/.*|باك|باك-ازرق|الصفحة-الرئيسية-بوينت)/?$ / [R=301,L,NC]
 RewriteRule ^(wp-sitemap|sitemap_index|post-sitemap|page-sitemap|category-sitemap)\.xml$ /sitemap.xml [R=301,L,NC]
 </IfModule>
 
 # 5) ضغط وتخزين مؤقت
+<Files xmlrpc.php>
+Require all denied
+</Files>
+
 <IfModule mod_deflate.c>
 AddOutputFilterByType DEFLATE text/html text/css application/javascript text/javascript image/svg+xml application/xml text/plain
 </IfModule>
