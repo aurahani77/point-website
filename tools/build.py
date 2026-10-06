@@ -376,11 +376,13 @@ def branches_page():
     def card(b, n):
         tag = rname[b['region']] if b['region'] else 'جدة'
         q = html.escape(f"{b['label']} {b['city']} {tag}")
-        return (f'<li class="br-card" data-city="{b["city"]}" data-region="{b["region"]}" data-q="{q}">'
-                f'<a href="{html.escape(b["map"])}" target="_blank" rel="noopener" aria-label="الاتجاهات إلى بوينت ماركت {html.escape(b["label"])}">'
+        wa = 'https://wa.me/966599232857?text=' + quote(f"مرحباً بوينت، عندي استفسار عن فرع {b['label']} - {b['city']}")
+        return (f'<li class="br-card" data-city="{b["city"]}" data-region="{b["region"]}" data-q="{q}"><div class="br-row">'
+                f'<a class="br-main-link" href="{html.escape(b["map"])}" target="_blank" rel="noopener" aria-label="الاتجاهات إلى بوينت ماركت {html.escape(b["label"])}">'
                 f'<span class="br-pin">{icon("pin", 18)}</span>'
-                f'<span class="br-info"><b>{html.escape(b["label"])}</b><small>{tag}</small></span>'
-                f'<span class="br-go">الاتجاهات {icon("arrow", 14)}</span></a></li>')
+                f'<span class="br-info"><b>{html.escape(b["label"])}</b><small>{tag}</small></span></a>'
+                f'<a class="br-call" href="{wa}" target="_blank" rel="noopener" aria-label="تواصل واتساب بخصوص فرع {html.escape(b["label"])}">{icon("wa", 16)}<span dir="ltr">+966 59 923 2857</span></a>'
+                f'<a class="br-go" href="{html.escape(b["map"])}" target="_blank" rel="noopener">الاتجاهات {icon("arrow", 14)}</a></div></li>')
 
     groups, n = '', 0
     for k, name, _ in REGIONS:
@@ -444,7 +446,7 @@ def branches_page():
 <div class="br-chips" aria-label="المنطقة">{chips}</div>
 </div></div>
 <section class="br-main"><div class="container br-layout">
-<div class="br-panel"><div class="br-panel-head"><b class="br-count" aria-live="polite"></b><span>اضغط على الفرع لفتح الاتجاهات</span></div>
+<div class="br-panel"><div class="br-panel-head"><b class="br-count" aria-live="polite"></b><span>للتواصل والاتجاهات اختر الفرع</span></div>
 <div class="br-results">{groups}<p class="br-empty" hidden>ما لقينا فرع بهذا الاسم. جرّب اسم حي ثاني أو غيّر المنطقة.</p></div></div>
 <aside class="br-map">
 <div class="br-map-card" data-for="الرياض"><div class="br-leaflet" id="br-leaflet" role="application" aria-label="خريطة مناطق الرياض"></div><svg class="br-fallback" viewBox="0 0 320 360" role="img" aria-label="خريطة مناطق الرياض">{zones}{labels}</svg><p class="br-map-note">اضغط على المنطقة لعرض فروعها · المواقع تقريبية</p></div>
