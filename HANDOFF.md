@@ -71,3 +71,8 @@ Read this first in any new session. Owner: Hala (Arabic replies, concise).
 ## Working rules
 - Batch Hala's edits when she says so. Screenshot-verify before every push. Changes show on test within 5–10 minutes. If she sees no change, tell her Ctrl+Shift+R.
 - Commit trailer: `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
+
+
+## Launch
+- 2026-10-06: LIVE_DIR switched to $HOME/public_html (cron). Static site served at the root; WordPress stays in place behind it (wp-admin + REST via .htaccess rewrite). Rollback: restore public_html/.htaccess-backup and delete public_html/index.html.
+- n8n workflow FP6HZkfHVrkkiR7M mirrors posts into WordPress every 15 min (published -> private, draft -> draft).
