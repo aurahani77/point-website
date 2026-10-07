@@ -1,9 +1,9 @@
 ---
 title: 'مقاضي الشتاء: ماذا يحتاج مطبخك مع أول برد؟'
 slug: winter-groceries-kitchen-needs
-status: draft
-date: '2026-10-01 17:44:33'
-modified: '2026-10-01 17:44:33'
+status: published
+date: '2026-10-08 09:00:00'
+modified: '2026-10-08 09:00:00'
 category: نصائح وأدلة تسوق
 description: 'مع أول نسمة باردة، جهّز مقاضي الشتاء الصحيحة لمطبخك: مشروبات ساخنة، شوربات، أكلات شعبية وسناكس تدفّئ البيت وتبسّط يومك.'
 cover: https://pointmarkets.sa/wp-content/uploads/2026/10/winter-groceries.jpg

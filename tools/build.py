@@ -128,7 +128,8 @@ def enrich(p):
 
 
 def card(p, featured=False):
-    badge = '<span class="tag" style="background:#fff7d1"><i></i>مسودة</span>' if p['status'] == 'draft' else ''
+    badge = ('<span class="tag" style="background:#e6f6f8"><i></i>مجدولة ' + ar_date(p['date']) + '</span>') if p.get('scheduled') else \
+            ('<span class="tag" style="background:#fff7d1"><i></i>مسودة</span>' if p['status'] == 'draft' else '')
     return (f'<a class="post-card{" featured" if featured else ""}" href="/blog/{p["slug"]}/">'
             f'<div class="thumb"><img src="{p["cover"]}" alt="{html.escape(p["cover_alt"])}" loading="{"eager" if featured else "lazy"}"></div>'
             f'<div class="body"><span class="tag"><i></i>{html.escape(p["cat"])}</span>{badge}<h2>{html.escape(p["title"])}</h2>'
@@ -582,6 +583,12 @@ def main():
         sys.exit(1)
     posts = [enrich(p) for p in posts]
     posts.sort(key=lambda p: p['date'], reverse=True)
+    # scheduled publishing: a 'published' post with a future date stays a draft until that date (Riyadh time)
+    now = (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S')
+    for p in posts:
+        if p['status'] == 'published' and str(p['date']) > now:
+            p['status'] = 'draft'
+            p['scheduled'] = True
     published = [p for p in posts if p['status'] == 'published']
     build(os.path.join(ROOT, 'public'), published, preview=False)
     build(os.path.join(ROOT, 'preview'), posts, preview=True)

@@ -1,9 +1,9 @@
 ---
 title: دليل القهوة المختصة في البيت للمبتدئين
 slug: specialty-coffee-at-home-guide
-status: draft
-date: '2026-10-01 17:44:40'
-modified: '2026-10-01 17:44:40'
+status: published
+date: '2026-10-11 09:00:00'
+modified: '2026-10-11 09:00:00'
 category: نصائح وأدلة تسوق
 description: 'تعرّف على أساسيات القهوة المختصة في البيت: أنواع البن، أدوات التحضير، وخطوات طريقة V60 المبسطة لمبتدئ يبحث عن فنجان بطعم مختلف كل صباح.'
 cover: https://pointmarkets.sa/wp-content/uploads/2026/10/specialty-coffee-at-home.jpg

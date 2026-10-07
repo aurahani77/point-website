@@ -1,9 +1,9 @@
 ---
 title: طريقة تخزين الطعام في الثلاجة والفريزر بالتفصيل
 slug: food-storage-fridge-freezer-guide
-status: draft
-date: '2026-10-01 17:45:17'
-modified: '2026-10-01 17:45:17'
+status: published
+date: '2026-10-09 09:00:00'
+modified: '2026-10-09 09:00:00'
 category: نصائح وأدلة تسوق
 description: تعرف على طريقة تخزين الطعام في الثلاجة والفريزر بجدول مدد واضح لكل صنف، يساعدك على تنظيم المطبخ وتقليل هدر الطعام يومياً بسهولة.
 cover: https://pointmarkets.sa/wp-content/uploads/2026/10/fridge-food-storage.jpg

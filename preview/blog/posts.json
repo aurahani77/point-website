@@ -1,5 +1,45 @@
 [
  {
+  "title": "أفكار فطور ويكند عائلي: 7 أطباق سعودية وعالمية",
+  "slug": "weekend-family-breakfast-ideas",
+  "url": "https://pointmarkets.sa/blog/weekend-family-breakfast-ideas/",
+  "status": "draft",
+  "date": "2026-10-12 09:00:00",
+  "focus_keyword": "أفكار فطور ويكند"
+ },
+ {
+  "title": "دليل القهوة المختصة في البيت للمبتدئين",
+  "slug": "specialty-coffee-at-home-guide",
+  "url": "https://pointmarkets.sa/blog/specialty-coffee-at-home-guide/",
+  "status": "draft",
+  "date": "2026-10-11 09:00:00",
+  "focus_keyword": "القهوة المختصة في البيت"
+ },
+ {
+  "title": "طريقة اختيار الفواكه الطازجة: علامات تعرفها من أول نظرة",
+  "slug": "how-to-choose-fresh-fruits-vegetables",
+  "url": "https://pointmarkets.sa/blog/how-to-choose-fresh-fruits-vegetables/",
+  "status": "draft",
+  "date": "2026-10-10 09:00:00",
+  "focus_keyword": "طريقة اختيار الفواكه الطازجة"
+ },
+ {
+  "title": "طريقة تخزين الطعام في الثلاجة والفريزر بالتفصيل",
+  "slug": "food-storage-fridge-freezer-guide",
+  "url": "https://pointmarkets.sa/blog/food-storage-fridge-freezer-guide/",
+  "status": "draft",
+  "date": "2026-10-09 09:00:00",
+  "focus_keyword": "طريقة تخزين الطعام في الثلاجة"
+ },
+ {
+  "title": "مقاضي الشتاء: ماذا يحتاج مطبخك مع أول برد؟",
+  "slug": "winter-groceries-kitchen-needs",
+  "url": "https://pointmarkets.sa/blog/winter-groceries-kitchen-needs/",
+  "status": "draft",
+  "date": "2026-10-08 09:00:00",
+  "focus_keyword": "مقاضي الشتاء"
+ },
+ {
   "title": "سناكس ترند في السعودية: أشهر المنتجات العالمية المطلوبة",
   "slug": "snacks-trend-saudi-global-products",
   "url": "https://pointmarkets.sa/blog/snacks-trend-saudi-global-products/",
@@ -16,22 +56,6 @@
   "focus_keyword": "قائمة مقاضي العزومة"
  },
  {
-  "title": "أفكار فطور ويكند عائلي: 7 أطباق سعودية وعالمية",
-  "slug": "weekend-family-breakfast-ideas",
-  "url": "https://pointmarkets.sa/blog/weekend-family-breakfast-ideas/",
-  "status": "draft",
-  "date": "2026-10-01 17:45:25",
-  "focus_keyword": "أفكار فطور ويكند"
- },
- {
-  "title": "طريقة تخزين الطعام في الثلاجة والفريزر بالتفصيل",
-  "slug": "food-storage-fridge-freezer-guide",
-  "url": "https://pointmarkets.sa/blog/food-storage-fridge-freezer-guide/",
-  "status": "draft",
-  "date": "2026-10-01 17:45:17",
-  "focus_keyword": "طريقة تخزين الطعام في الثلاجة"
- },
- {
   "title": "قائمة مقاضي البيت الشهرية مرتبة حسب الأقسام",
   "slug": "monthly-grocery-list",
   "url": "https://pointmarkets.sa/blog/monthly-grocery-list/",
@@ -46,30 +70,6 @@
   "status": "published",
   "date": "2026-10-01 17:45:06",
   "focus_keyword": "أفكار لانش بوكس للمدرسة"
- },
- {
-  "title": "طريقة اختيار الفواكه الطازجة: علامات تعرفها من أول نظرة",
-  "slug": "how-to-choose-fresh-fruits-vegetables",
-  "url": "https://pointmarkets.sa/blog/how-to-choose-fresh-fruits-vegetables/",
-  "status": "draft",
-  "date": "2026-10-01 17:44:58",
-  "focus_keyword": "طريقة اختيار الفواكه الطازجة"
- },
- {
-  "title": "دليل القهوة المختصة في البيت للمبتدئين",
-  "slug": "specialty-coffee-at-home-guide",
-  "url": "https://pointmarkets.sa/blog/specialty-coffee-at-home-guide/",
-  "status": "draft",
-  "date": "2026-10-01 17:44:40",
-  "focus_keyword": "القهوة المختصة في البيت"
- },
- {
-  "title": "مقاضي الشتاء: ماذا يحتاج مطبخك مع أول برد؟",
-  "slug": "winter-groceries-kitchen-needs",
-  "url": "https://pointmarkets.sa/blog/winter-groceries-kitchen-needs/",
-  "status": "draft",
-  "date": "2026-10-01 17:44:33",
-  "focus_keyword": "مقاضي الشتاء"
  },
  {
   "title": "أغراض الكشتة: قائمة مشتريات كاملة لرحلة البر",

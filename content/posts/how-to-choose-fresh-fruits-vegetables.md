@@ -1,9 +1,9 @@
 ---
 title: 'طريقة اختيار الفواكه الطازجة: علامات تعرفها من أول نظرة'
 slug: how-to-choose-fresh-fruits-vegetables
-status: draft
-date: '2026-10-01 17:44:58'
-modified: '2026-10-01 17:44:58'
+status: published
+date: '2026-10-10 09:00:00'
+modified: '2026-10-10 09:00:00'
 category: نصائح وأدلة تسوق
 description: تعرّف على طريقة اختيار الفواكه الطازجة والخضار الجيدة بعلامات بسيطة تميزها من أول نظرة، مع جدول للفواكه الموسمية في الشتاء ونصائح تخزين عملية من بوينت ماركت.
 cover: https://pointmarkets.sa/wp-content/uploads/2026/10/choose-fresh-fruits-vegetables.jpg

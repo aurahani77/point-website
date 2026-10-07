@@ -1,9 +1,9 @@
 ---
 title: 'أفكار فطور ويكند عائلي: 7 أطباق سعودية وعالمية'
 slug: weekend-family-breakfast-ideas
-status: draft
-date: '2026-10-01 17:45:25'
-modified: '2026-10-01 17:45:25'
+status: published
+date: '2026-10-12 09:00:00'
+modified: '2026-10-12 09:00:00'
 category: نصائح وأدلة تسوق
 description: 'أفكار فطور ويكند عائلي سهلة وسريعة: 7 أطباق بين السعودي والعالمي، مع قائمة تحقق ومقارنة عملية تساعدك تخطط صباح الجمعة بهدوء.'
 cover: https://pointmarkets.sa/wp-content/uploads/2026/10/weekend-family-breakfast.jpg
