@@ -1,9 +1,9 @@
 ---
 title: قائمة مقاضي البيت الشهرية مرتبة حسب الأقسام
 slug: monthly-grocery-list
-status: draft
+status: published
 date: '2026-10-01 17:45:12'
-modified: '2026-10-01 17:45:12'
+modified: '2026-10-07 14:16:31'
 category: نصائح وأدلة تسوق
 description: قائمة مقاضي البيت الشهرية كاملة ومرتبة حسب أقسام السوبرماركت، مع جدول يوضح الفرق بين المشتريات الشهرية والأسبوعية، لتسوق منظم وبلا نسيان.
 cover: https://pointmarkets.sa/wp-content/uploads/2026/10/monthly-grocery-list.jpg
