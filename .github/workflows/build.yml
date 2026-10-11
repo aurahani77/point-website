@@ -39,3 +39,9 @@ jobs:
             echo "Push rejected (main moved), retrying..."; sleep 5
           done
           exit 1
+      - name: Mirror posts into WordPress admin
+        continue-on-error: true
+        env:
+          WP_USER: ${{ secrets.WP_USER }}
+          WP_APP_PASSWORD: ${{ secrets.WP_APP_PASSWORD }}
+        run: python tools/wp_sync.py
