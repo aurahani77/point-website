@@ -141,7 +141,16 @@ def iso(d):
     return d.replace(' ', 'T') + ('+03:00' if len(d) > 10 else '')
 
 
+def unlink_missing(body, slugs):
+    """Links to blog posts that aren't in this build (drafts / scheduled) become plain text,
+    so the live site never has broken internal links. They turn back into links once the target is published."""
+    def fix(m):
+        return m.group(0) if m.group(1) in slugs else m.group(2)
+    return re.sub(r'<a href="/blog/([a-z0-9-]+)/"[^>]*>(.*?)</a>', fix, body, flags=re.S)
+
+
 def article(p, all_posts, preview):
+    p = dict(p, body=unlink_missing(p['body'], {o['slug'] for o in all_posts}))
     others = [o for o in all_posts if o['slug'] != p['slug']][:3]
     url = f"{SITE}/blog/{p['slug']}/"
     toc_html = ''
