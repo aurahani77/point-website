@@ -25,6 +25,7 @@ WP = 'https://pointmarkets.sa/wp-json/wp/v2/posts'
 SITE = 'https://pointmarkets.sa'
 PREVIEW = 'https://test.pointmarkets.sa'
 STATUSES = 'publish,future,draft,pending,private'
+MARKER = 'هذه نسخة للعرض داخل ووردبريس'
 
 user, pw = os.environ.get('WP_USER', ''), os.environ.get('WP_APP_PASSWORD', '')
 if not user or not pw:
@@ -107,6 +108,18 @@ def main():
         except Exception as e:  # keep going; report at the end
             failed += 1; print(f'  ! failed   {p["slug"]}: {e}')
     print(f'WordPress sync: {created} created, {updated} updated, {skipped} unchanged, {failed} failed')
+    # articles deleted from the site: move their WordPress *draft* copies (made by this sync) to the trash
+    slugs = {p['slug'] for p in posts}
+    trashed = 0
+    try:
+        drafts = api('GET', WP + '?' + urllib.parse.urlencode(
+            {'status': 'draft', 'context': 'edit', 'per_page': 100, '_fields': 'id,slug,content'}))
+        for d in drafts:
+            if d['slug'] and d['slug'] not in slugs and MARKER in (d.get('content') or {}).get('raw', ''):
+                api('DELETE', f'{WP}/{d["id"]}'); trashed += 1; print(f'  - trashed  [draft] {d["slug"]}')
+    except Exception as e:
+        failed += 1; print(f'  ! cleanup failed: {e}')
+    print(f'Removed drafts: {trashed}')
     sys.exit(1 if failed else 0)
 
 
