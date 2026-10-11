@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Mirror blog posts into WordPress admin (replaces the n8n "Sync Posts to WordPress" workflow).
 
-Published posts -> WP status "private" (visible in wp-admin only, so Google never sees duplicate content).
+Published posts -> WordPress status "private" (visible in wp-admin only, so Google never sees duplicate content).
 Drafts and scheduled posts -> WP status "draft".
 Posts that already carry `wp_id` (migrated from the old WordPress site) are skipped.
 
