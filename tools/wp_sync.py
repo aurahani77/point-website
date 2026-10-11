@@ -5,7 +5,7 @@ Published posts -> WP status "private" (visible in wp-admin only, so Google neve
 Drafts and scheduled posts -> WP status "draft".
 Posts that already carry `wp_id` (migrated from the old WordPress site) are skipped.
 
-Needs env vars WP_USER and WP_APP_PASSWORD (GitHub repo secrets). Uses only the standard library + pyyaml.
+Needs env vars WP_USER and WP_APP_PASSWORD (GitHub repo secrets: Settings > Secrets and variables > Actions). Uses only the standard library + pyyaml.
 """
 import base64
 import datetime
