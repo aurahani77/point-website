@@ -10,8 +10,13 @@ AddDefaultCharset UTF-8
 AddType font/woff2 .woff2
 AddType text/plain .txt
 
+# تمرير ترويسة Authorization لووردبريس (ضروري لدخول مزامنة المقالات عبر REST API بكلمة مرور التطبيق)
+SetEnvIf Authorization "(.*)" HTTP_AUTHORIZATION=$1
+
 <IfModule mod_rewrite.c>
 RewriteEngine On
+RewriteCond %{HTTP:Authorization} .
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
 # 1) بدون www + HTTPS (للدومين الأساسي فقط، آمن مع Cloudflare)
 RewriteCond %{HTTP_HOST} ^www\.pointmarkets\.sa$ [NC]
