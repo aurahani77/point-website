@@ -4,7 +4,8 @@ Read this first in any new session. Owner: Hala (Arabic replies, concise).
 
 ## What this is
 - Static site replacing the WordPress site at pointmarkets.sa. No CMS, no database.
-- Repo: github.com/aurahani77/point-website (public). Push needs a GitHub token from Hala, used only as an `http.extraHeader` at push time. Never write it into a file.
+- Repo: github.com/point-markets/point-website (public; moved from aurahani77 on 2026-10-11, GitHub redirects the old URL). Org owners: Hala (aurahani77); Yusef (yusefbaz4) has access too.
+- WordPress mirror: tools/wp_sync.py runs as the last step of .github/workflows/build.yml (secrets WP_USER / WP_APP_PASSWORD). The n8n sync workflow is unpublished. Push needs a GitHub token from Hala, used only as an `http.extraHeader` at push time. Never write it into a file.
 - Preview: https://test.pointmarkets.sa. Live root domain is NOT switched yet.
 
 ## How it works
