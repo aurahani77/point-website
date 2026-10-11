@@ -59,7 +59,23 @@ def find(p):
 
 def main():
     # fail fast with a clear message if the credentials are wrong
-    me = api('GET', 'https://pointmarkets.sa/wp-json/wp/v2/users/me?context=edit&_fields=id,name,capabilities')
+    try:
+        me = api('GET', 'https://pointmarkets.sa/wp-json/wp/v2/users/me?context=edit&_fields=id,name,capabilities')
+    except RuntimeError as e:
+        print('AUTH FAILED:', e)
+        print('--- diagnostics ---')
+        print('WP_USER length:', len(user), '| contains @:', '@' in user, '| app password length (no spaces):', len(pw.replace(' ', '')))
+        for u in ['https://pointmarkets.sa/version.txt', 'https://pointmarkets.sa/wp-json/',
+                  'https://pointmarkets.sa/index.php?rest_route=/wp/v2/users/me']:
+            req = urllib.request.Request(u, headers={'Authorization': AUTH, 'User-Agent': 'point-wp-sync'})
+            try:
+                with urllib.request.urlopen(req, timeout=30) as r:
+                    code, hdr, body = r.status, r.headers, r.read(400).decode('utf-8', 'replace')
+            except urllib.error.HTTPError as h:
+                code, hdr, body = h.code, h.headers, h.read(400).decode('utf-8', 'replace')
+            keep = {k: v for k, v in hdr.items() if k.lower() in ('server', 'x-powered-by', 'cf-ray', 'x-litespeed-cache', 'www-authenticate', 'x-wp-total')}
+            print(f'{u} -> {code} {keep}\n   {body[:200] if "wp-json/" not in u or code != 200 else "(index ok)"}')
+        sys.exit(1)
     if not (me.get('capabilities') or {}).get('edit_posts'):
         sys.exit(f'WordPress user "{me.get("name")}" cannot edit posts')
     print(f'Authenticated as {me.get("name")}')
