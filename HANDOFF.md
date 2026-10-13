@@ -1,86 +1,40 @@
-# Point Market website — handoff (updated 2026-10-05)
+# Point Market website — handoff (updated 2026-10-13)
 
-Read this first in any new session. Owner: Hala (Arabic replies, concise).
+Read this first in any new session. Owner: Hala (replies in Arabic, Levantine/Gulf mix, concise). No emoji in published content.
 
 ## What this is
-- Static site replacing the WordPress site at pointmarkets.sa. No CMS, no database.
-- Repo: github.com/point-markets/point-website (public; moved from aurahani77 on 2026-10-11, GitHub redirects the old URL). Org owners: Hala (aurahani77); Yusef (yusefbaz4) has access too.
-- WordPress mirror: tools/wp_sync.py runs as the last step of .github/workflows/build.yml (secrets WP_USER / WP_APP_PASSWORD). The n8n sync workflow is unpublished. Push needs a GitHub token from Hala, used only as an `http.extraHeader` at push time. Never write it into a file.
-- Preview: https://test.pointmarkets.sa. Live root domain is NOT switched yet.
+- Static site at **https://pointmarkets.sa** (live since 2026-10-06), replacing the old WordPress front end. Preview with drafts: https://test.pointmarkets.sa (noindex).
+- Repo: **github.com/point-markets/point-website** (public). Moved from aurahani77 on 2026-10-11; GitHub redirects the old URL. Org owner: Hala (aurahani77). Yusef (yusefbaz4) has write access (outside collaborator).
+- Pushing needs a fine-grained GitHub token from Hala (resource owner = point-markets, Contents + Workflows read/write). Use it only at push time via `git -c http.extraHeader="Authorization: Basic <base64 x-access-token:TOKEN>"`. Never write it into a file.
+- Hosting: cPanel at Sahari (صحاري); nameservers NS11/12/13.SHOOUBADVANCE.COM. Had a full server outage on 2026-10-11 ~17:15 (web + DNS down for everyone); came back on its own. Not caused by site code.
 
 ## How it works
-- `static/index.html` + `static/assets/app.js`: homepage. It's a minified React/Vite bundle, so edit its strings directly (`f.jsx` / `f.jsxs`). Branch data lives in this bundle (`gt=[["الرياض","حي","map url"],...]`) and is the single source of truth.
-- `static/assets/site.css`: homepage styles. The Norsal font is at `/assets/fonts/Norsal.woff2`. The edit blocks are at the end of the file. Global rule: `letter-spacing:0` (Arabic letters must stay joined).
-- `static/assets/blog.css`: styles for every generated page: blog, legal, branches.
-- `tools/build.py`: builds `public/` (published only) and `preview/` (with drafts, noindex). It generates:
-  - blog index
-  - category pages `/blog/category/tips|news/`
-  - articles
-  - `/privacy-policy/`, `/terms/` (text in `tools/legal.py`)
-  - `/branches/`
-  - sitemap, `llms.txt`, `posts.json`, `.htaccess` (301s from old WordPress URLs)
-  - cache-busting `?v=hash` on CSS/JS
-  - Jahez banner link (`https://jahez.go.link/1YlM4`)
-- `tools/theme.py`: shared header/footer/icons for the generated pages.
-- `content/posts/*.md`: YAML front matter (`status: draft|published`, `category: نصائح وأدلة تسوق | أخبار بوينت`) plus an HTML body.
-- `.github/workflows/build.yml` builds on push. A cPanel cron job every 5 minutes runs `deploy/deploy.sh`, which copies `preview/` to the test subdomain. Check the deployed commit at `/version.txt`.
-- n8n:
-  - "Article Writer" (wCaiER8YRHVtIozw) commits drafts to GitHub.
-  - "Publish Link" (zDP2goeXwQFVnxti) flips a draft to published.
-  - Credential: "GitHub point-website".
-- Images stay on `https://pointmarkets.sa/wp-content/uploads/`. Never delete wp-content.
+- `content/posts/*.md`: YAML front matter (title, slug, status draft|published, date, modified, category `نصائح وأدلة تسوق` | `أخبار بوينت`, description, cover, cover_alt, focus_keyword) + HTML body (house style: «باختصار» box, question H2s, table, Jahez banner, 5-question FAQ, closing link to /branches/).
+- `tools/build.py` builds `public/` (published only) and `preview/` (everything, noindex): blog index + categories, articles, /branches/, /privacy-policy/, /terms/, sitemap, llms.txt, posts.json, .htaccess (301s from old WP URLs), cache-busting.
+  - Scheduled publishing: `status: published` + future `date` (Riyadh time) stays a draft until that date.
+  - `unlink_missing()`: links to posts not in the build become plain text (no broken links on live).
+- `tools/theme.py` header/footer; `tools/legal.py` privacy/terms text (company: شركة الفا الغرب التجارية, unified national number 7023567725).
+- `static/` homepage (minified React bundle in `static/assets/app.js`; branch data `gt=[...]` lives there), CSS, motion.js, newsletter.js, `htaccess.tpl` (passes Authorization header to WP; WP admin + REST stay working behind the static site).
+- `.github/workflows/build.yml`: on push (content/static/tools) + daily cron 06:05 UTC → build, commit public/preview, then `tools/wp_sync.py` mirrors posts into WordPress (published → private, draft → draft, deleted drafts → trash). Secrets: WP_USER, WP_APP_PASSWORD (app password of WP user "Yusef Baz").
+  - NOTE: the daily cron did not fire on 2026-10-12 (likely because of the repo transfer). Oct 12 post was released by a manual build+push. Verify the schedule runs; if not, re-save the workflow or trigger it manually.
+- cPanel cron every 5 min: `PREVIEW_DIR=$HOME/public_html/test.pointmarkets.sa LIVE_DIR=$HOME/public_html /bin/bash $HOME/repositories/point-website/deploy/deploy.sh >> $HOME/point-deploy.log 2>&1`. Deployed commit visible at /version.txt. No cPanel Terminal available. Hala may have run a temporary every-minute cron to `git remote set-url` to the org URL — make sure it was deleted.
+- n8n: subscription ending. "Sync Posts to WordPress" workflow unpublished (replaced by wp_sync.py). Newsletter signup still goes to n8n webhook https://aurash77.app.n8n.cloud/webhook/point-newsletter → data table "Point Newsletter Subscribers"; plan is to move it to Brevo (free) and export subscribers.
+- Images live on https://pointmarkets.sa/wp-content/uploads/ or `static/assets/img/`. Never delete wp-content.
 
-## Done
-- Homepage design edits:
-  - header CTA «ابحث عن أقرب فرع», marquee, footer (blue + yellow, SVG social icons)
-  - categories title on one line
-  - 37 branches (33 Riyadh, 4 Jeddah; النزهة 1 + النزهة 2)
-- Blog with categories, 7 published posts + 7 drafts.
-- Privacy + terms pages, linked in the footers.
-- `/branches/` v2: storefront hero photo (`/assets/img/branch-front.jpg`), city + Riyadh region filter, clickable zone map, search, grouped cards, WhatsApp share, Jahez CTA, GroceryStore + FAQ schema. Region mapping is `REGION_OF` in build.py. All "الفروع" / "ابحث عن أقرب فرع" links point to /branches/.
-- Homepage scroll motion is live (`static/assets/motion.js` + "Scroll motion" block in site.css).
+## Content status (2026-10-13)
+- Published: 15 posts, incl. high-protein-grocery-list (Oct 11, own cover .webp) and weekend-family-breakfast-ideas (Oct 12).
+- Drafts awaiting Hala's approval (Oct batch, SEO/GEO, review sheet point-articles-oct-2026.xlsx; White Friday article deleted at her request):
+  riyadh-season-2026-outing-snacks, winter-soups-shopping-list, high-fiber-foods-list, matcha-trending-drinks-at-home, healthy-kids-snacks-after-school, saudi-dates-varieties-guide, cheese-types-guide-supermarket, weekly-meal-prep-on-budget.
+  All still use placeholder cover `/assets/img/hero.jpg`. Cover prompts: point-article-cover-prompts.xlsx. Hala is making images (her shared Drive folder from layan isn't readable by the connector — ask her to upload files/zip).
+- Plan once approved: add covers, set status published with dates one per day, push.
 
-## In progress / next
-1. ~~Homepage scroll motion~~ DONE. Old notes: (Hala chose "حركة مع السكرول"):
-   - `static/assets/motion.js` is written but NOT wired yet.
-   - To wire it: add `<script defer src="/assets/motion.js">` to `static/index.html`, add motion.js to `bust_cache`, and write the CSS:
-     - `html.motion .w` word reveal (padding so Arabic marks aren't clipped)
-     - `.scroll-progress` bar (yellow, fixed top, origin right)
-     - `header.scrolled`
-     - curtain reveal on `.quality-image`
-   - Respect prefers-reduced-motion. Test with Playwright screenshots (desktop + 390px mobile).
-2. ~~Redesign `/branches/`~~ DONE (v2). Still pending:: Hala doesn't like v1. She wants a region filter like trolley.com.sa/locations.
-   - Filter: city → Riyadh region (شمال/شرق/غرب/وسط/جنوب) + search.
-   - The sandbox can't resolve the map short links, so regions are assigned by district knowledge. Proposed:
-     - شمال: الرحمانية, المحمدية, الربيع, النفل, النزهة 1, النزهة 2, النرجس, العارض, يو ووك, الورود, الملك سلمان, أبو بكر, الياسمين, أنس بن مالك, الندى, الملقا
-     - شرق: خريص, الملك عبدالله, الروضة, النهضة, غرناطة, النسيم, الرمال 1, الرمال 2, المونسية, السلي, الجنادرية
-     - غرب: لبن, نجم الدين, المزاحمية
-     - وسط: التحلية
-     - جنوب: الرفيعة
-   - **Ask Hala to confirm** «التواصل» (unknown; maybe التعاون in Jeddah?) and «التحلية» (Riyadh or Jeddah?).
-3. Open items for Hala:
-   - company legal name + CR number for the legal pages
-   - the footer newsletter field doesn't submit anywhere (connect it or remove it)
-   - legal review of the privacy/terms text
-   - the snacks draft says «ميني ماركت» (n8n banned-word table wlJuGhBQLqeBcIJc)
-4. Later: launch on the root domain.
-   - Back up first.
-   - Move the WordPress core to `_old-wordpress`, keeping wp-content.
-   - Set `LIVE_DIR=$HOME/public_html` in the cron job.
-   - Submit the sitemap in Search Console.
+## Open items for Hala
+- Approve the 8 drafts + provide covers.
+- Brevo account for the newsletter.
+- Optional: make Yusef Admin / org Owner; delete old GitHub token.
+- Branches «التواصل» and «التحلية» confirmed in Riyadh (listed under وسط; region not specified).
 
 ## Working rules
-- Batch Hala's edits when she says so. Screenshot-verify before every push. Changes show on test within 5–10 minutes. If she sees no change, tell her Ctrl+Shift+R.
+- Screenshot-verify before pushing UI changes (desktop + 390px). Changes show within 5–10 min; tell Hala Ctrl+Shift+R if she sees no change.
+- Keep `letter-spacing:0` (Arabic must stay joined). No emoji, no «ميني ماركت», no competitor names in content.
 - Commit trailer: `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
-
-
-## Launch
-- 2026-10-06: LIVE_DIR switched to $HOME/public_html (cron). Static site served at the root; WordPress stays in place behind it (wp-admin + REST via .htaccess rewrite). Rollback: restore public_html/.htaccess-backup and delete public_html/index.html.
-- n8n workflow FP6HZkfHVrkkiR7M mirrors posts into WordPress every 15 min (published -> private, draft -> draft).
-
-## Newsletter
-- Footer form -> static/assets/newsletter.js -> n8n webhook https://aurash77.app.n8n.cloud/webhook/point-newsletter (workflow faj6RlJvjdmcned7) -> data table "Point Newsletter Subscribers" (6TiTrTORi37Jzdwr). Sending campaigns: not set up yet (suggest Brevo).
-
-## Pending from Hala (remind her)
-- Confirm branches «التواصل» (https://maps.app.goo.gl/zsEx6zg6UxziMXd3A) and «التحلية» (https://maps.app.goo.gl/v9dreRdfBjXKtMxj6): city + region.
-- Official company name + CR number for privacy/terms pages.
