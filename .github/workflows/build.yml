@@ -6,7 +6,10 @@ on:
     paths: ['content/**', 'static/**', 'tools/**']
   workflow_dispatch:
   schedule:
-    - cron: '5 6 * * *'   # daily 09:05 Riyadh: releases scheduled posts
+    # GitHub delays scheduled runs by hours under load (seen: 6-9h late), so run
+    # right after Riyadh midnight and again early morning; the build is idempotent.
+    - cron: '17 21 * * *'   # 00:17 Riyadh
+    - cron: '37 3 * * *'    # 06:37 Riyadh
 
 permissions:
   contents: write
