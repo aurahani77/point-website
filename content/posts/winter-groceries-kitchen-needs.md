@@ -6,8 +6,8 @@ date: '2026-10-08 09:00:00'
 modified: '2026-10-08 09:00:00'
 category: نصائح وأدلة تسوق
 description: 'مع أول نسمة باردة، جهّز مقاضي الشتاء الصحيحة لمطبخك: مشروبات ساخنة، شوربات، أكلات شعبية وسناكس تدفّئ البيت وتبسّط يومك.'
-cover: /assets/img/winter-groceries-kitchen-needs.webp
-cover_alt: 'أم وابنتها تتسوقان من رف الخضار الطازجة في بوينت ماركت: جزر وليمون وباذنجان وكوسا وطماطم'
+cover: https://pointmarkets.sa/wp-content/uploads/2026/10/winter-groceries.jpg
+cover_alt: أكلات شتوية سعودية مثل الجريش والمرقوق
 focus_keyword: مقاضي الشتاء
 ---
 

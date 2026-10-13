@@ -6,8 +6,8 @@ date: '2026-03-05 15:36:28'
 modified: '2026-10-01 17:44:49'
 category: نصائح وأدلة تسوق
 description: اكتشف أسرار سلة التسوق الذكية مع بوينت ماركت. عروض حصرية على مقاضي البيت وأفضل أسعار المنتجات الغذائية في أحيائكم. تسوق بذكاء ووفر أكثر اليوم!
-cover: /assets/img/smart-shopping-basket-essentials.webp
-cover_alt: 'يد ترفع حقيبة قماشية عليها شعار بوينت أمام سماء صافية'
+cover: https://pointmarkets.sa/wp-content/uploads/2026/03/%D8%B5%D9%88%D8%B1-%D8%A7%D9%84%D9%85%D8%AF%D9%88%D9%86%D8%A9-%D8%A8%D9%88%D9%8A%D9%86%D8%AA.png
+cover_alt: التسوق الذكي
 focus_keyword: أساسيات سلة التسوق
 reading_minutes: 13
 old_url: /دليلكم-الشامل-لبناء-أساسيات-سلة-التسو/

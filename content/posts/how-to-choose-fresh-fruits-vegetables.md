@@ -6,8 +6,8 @@ date: '2026-10-10 09:00:00'
 modified: '2026-10-10 09:00:00'
 category: نصائح وأدلة تسوق
 description: تعرّف على طريقة اختيار الفواكه الطازجة والخضار الجيدة بعلامات بسيطة تميزها من أول نظرة، مع جدول للفواكه الموسمية في الشتاء ونصائح تخزين عملية من بوينت ماركت.
-cover: /assets/img/how-to-choose-fresh-fruits-vegetables.webp
-cover_alt: 'امرأة تختار عبوة برتقال طازج من رف الفواكه المغلفة في بوينت ماركت'
+cover: https://pointmarkets.sa/wp-content/uploads/2026/10/choose-fresh-fruits-vegetables.jpg
+cover_alt: خضار وفواكه طازجة مرتبة في سوبرماركت
 focus_keyword: طريقة اختيار الفواكه الطازجة
 ---
 
