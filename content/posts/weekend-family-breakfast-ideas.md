@@ -6,8 +6,8 @@ date: '2026-10-12 09:00:00'
 modified: '2026-10-12 09:00:00'
 category: نصائح وأدلة تسوق
 description: 'أفكار فطور ويكند عائلي سهلة وسريعة: 7 أطباق بين السعودي والعالمي، مع قائمة تحقق ومقارنة عملية تساعدك تخطط صباح الجمعة بهدوء.'
-cover: https://pointmarkets.sa/wp-content/uploads/2026/10/weekend-family-breakfast.jpg
-cover_alt: فطور ويكند سعودي بالشكشوكة والفول والمعصوب والتميس
+cover: /assets/img/weekend-family-breakfast-ideas.webp
+cover_alt: 'لوح خشبي دائري عليه وافل وبان كيك وبسكويت وتوت وفراولة مع برطمانات شوكولاتة، وحوله أطباق زيتون وفول ولبنة على طاولة فطور عائلي'
 focus_keyword: أفكار فطور ويكند
 ---
 
