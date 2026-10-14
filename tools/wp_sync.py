@@ -25,6 +25,8 @@ WP = 'https://pointmarkets.sa/wp-json/wp/v2/posts'
 SITE = 'https://pointmarkets.sa'
 PREVIEW = 'https://test.pointmarkets.sa'
 STATUSES = 'publish,future,draft,pending,private'
+# front-matter category -> WordPress category name (matched against wp-admin categories, ignoring hamza/spacing)
+WP_CATEGORY = {'نصائح وأدلة تسوق': 'المدونة', 'أخبار بوينت': 'اخبار'}
 MARKER = 'هذه نسخة للعرض داخل ووردبريس'
 
 user, pw = os.environ.get('WP_USER', ''), os.environ.get('WP_APP_PASSWORD', '')
@@ -49,8 +51,20 @@ def norm(s):
     return re.sub(r'\s+', ' ', html.unescape(re.sub(r'<[^>]+>', '', str(s or '')))).strip()
 
 
+def cat_ids():
+    """Map front-matter category -> WordPress category id (empty dict if lookup fails)."""
+    try:
+        cats = api('GET', 'https://pointmarkets.sa/wp-json/wp/v2/categories?per_page=100&_fields=id,name')
+    except RuntimeError as e:
+        print('  ! category lookup failed:', e)
+        return {}
+    key = lambda s: re.sub(r'[\s\u0623\u0625\u0622]', lambda m: '' if m.group().isspace() else '\u0627', norm(s))
+    by_name = {key(c['name']): c['id'] for c in cats}
+    return {fm: by_name[key(wp)] for fm, wp in WP_CATEGORY.items() if key(wp) in by_name}
+
+
 def find(p):
-    q = {'status': STATUSES, 'context': 'edit', '_fields': 'id,status,slug,title'}
+    q = {'status': STATUSES, 'context': 'edit', '_fields': 'id,status,slug,title,categories'}
     hits = api('GET', WP + '?' + urllib.parse.urlencode(dict(q, slug=p['slug'])))
     if hits:
         return hits[0]
@@ -84,6 +98,8 @@ def main():
     posts, errors = load_posts()
     now = (datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=3)).strftime('%Y-%m-%d %H:%M:%S')
     created = updated = skipped = failed = 0
+    cats = cat_ids()
+    print('Category map:', cats or 'none found - posts keep the default category')
     for p in posts:
         if p.get('wp_id'):
             continue
@@ -97,11 +113,14 @@ def main():
         img = f'<p><img src="{cover}" alt="{html.escape(str(p.get("cover_alt") or p["title"]))}"></p>'
         body = {'title': p['title'], 'slug': p['slug'], 'status': status, 'date': p['date'].replace(' ', 'T'),
                 'excerpt': p.get('description', ''), 'content': note + img + p['body_raw']}
+        want = [cats[p['category']]] if p.get('category') in cats else None
+        if want:
+            body['categories'] = want
         try:
             hit = find(p)
             if not hit:
                 api('POST', WP, body); created += 1; print(f'  + created  [{status}] {p["slug"]}')
-            elif hit['status'] != status:
+            elif hit['status'] != status or (want and hit.get('categories') != want):
                 api('POST', f'{WP}/{hit["id"]}', body); updated += 1; print(f'  ~ updated  [{status}] {p["slug"]}')
             else:
                 skipped += 1
