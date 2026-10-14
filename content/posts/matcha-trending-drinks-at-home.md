@@ -1,9 +1,9 @@
 ---
 title: 'مشروبات ترند في البيت: من الماتشا إلى شاي الكرك'
 slug: matcha-trending-drinks-at-home
-status: draft
-date: '2026-10-11 10:00:00'
-modified: '2026-10-11 10:00:00'
+status: published
+date: '2026-10-19 09:00:00'
+modified: '2026-10-19 09:00:00'
 category: نصائح وأدلة تسوق
 description: 'مشروبات ترند في البيت بخطوات سهلة: لاتيه الماتشا والسبانش لاتيه المثلج وشاي الكرك والكركديه، مع شرح أنواع الماتشا وقائمة مكونات تشتريها من السوبرماركت.'
 cover: /assets/img/matcha-trending-drinks-at-home.webp

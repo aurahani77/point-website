@@ -1,9 +1,9 @@
 ---
 title: 'سناكس صحية للأطفال بعد المدرسة: 10 أفكار سريعة'
 slug: healthy-kids-snacks-after-school
-status: draft
-date: '2026-10-11 10:00:00'
-modified: '2026-10-11 10:00:00'
+status: published
+date: '2026-10-17 09:00:00'
+modified: '2026-10-17 09:00:00'
 category: نصائح وأدلة تسوق
 description: 'سناكس صحية للأطفال بعد المدرسة: 10 أفكار سريعة للعصرونية، مع قائمة مشتريات حسب الأقسام ونصائح لقراءة الملصق الغذائي وجدول للعمر المناسب ووقت التحضير.'
 cover: /assets/img/healthy-kids-snacks-after-school.webp

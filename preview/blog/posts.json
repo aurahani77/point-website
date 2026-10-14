@@ -1,5 +1,61 @@
 [
  {
+  "title": "تحضير وجبات الأسبوع بميزانية: خطة ميل بريب للعائلة",
+  "slug": "weekly-meal-prep-on-budget",
+  "url": "https://pointmarkets.sa/blog/weekly-meal-prep-on-budget/",
+  "status": "draft",
+  "date": "2026-10-21 09:00:00",
+  "focus_keyword": "تحضير وجبات الأسبوع"
+ },
+ {
+  "title": "دليل أنواع التمور: كيف تختار التمر المناسب؟",
+  "slug": "saudi-dates-varieties-guide",
+  "url": "https://pointmarkets.sa/blog/saudi-dates-varieties-guide/",
+  "status": "draft",
+  "date": "2026-10-20 09:00:00",
+  "focus_keyword": "أنواع التمور"
+ },
+ {
+  "title": "مشروبات ترند في البيت: من الماتشا إلى شاي الكرك",
+  "slug": "matcha-trending-drinks-at-home",
+  "url": "https://pointmarkets.sa/blog/matcha-trending-drinks-at-home/",
+  "status": "draft",
+  "date": "2026-10-19 09:00:00",
+  "focus_keyword": "مشروبات ترند في البيت"
+ },
+ {
+  "title": "دليل أنواع الأجبان في السوبرماركت واستخداماتها",
+  "slug": "cheese-types-guide-supermarket",
+  "url": "https://pointmarkets.sa/blog/cheese-types-guide-supermarket/",
+  "status": "draft",
+  "date": "2026-10-18 09:00:00",
+  "focus_keyword": "أنواع الأجبان"
+ },
+ {
+  "title": "سناكس صحية للأطفال بعد المدرسة: 10 أفكار سريعة",
+  "slug": "healthy-kids-snacks-after-school",
+  "url": "https://pointmarkets.sa/blog/healthy-kids-snacks-after-school/",
+  "status": "draft",
+  "date": "2026-10-17 09:00:00",
+  "focus_keyword": "سناكس صحية للأطفال"
+ },
+ {
+  "title": "أطعمة غنية بالألياف: قائمة تسوق لترند 2026",
+  "slug": "high-fiber-foods-list",
+  "url": "https://pointmarkets.sa/blog/high-fiber-foods-list/",
+  "status": "draft",
+  "date": "2026-10-16 09:00:00",
+  "focus_keyword": "أطعمة غنية بالألياف"
+ },
+ {
+  "title": "شوربات الشتاء: 7 شوربات وقائمة مشترياتها",
+  "slug": "winter-soups-shopping-list",
+  "url": "https://pointmarkets.sa/blog/winter-soups-shopping-list/",
+  "status": "draft",
+  "date": "2026-10-15 09:00:00",
+  "focus_keyword": "شوربات الشتاء"
+ },
+ {
   "title": "سناكس موسم الرياض 2026: قائمة مشروبات وطلعات العائلة",
   "slug": "riyadh-season-2026-outing-snacks",
   "url": "https://pointmarkets.sa/blog/riyadh-season-2026-outing-snacks/",
@@ -16,68 +72,12 @@
   "focus_keyword": "أفكار فطور ويكند"
  },
  {
-  "title": "دليل أنواع الأجبان في السوبرماركت واستخداماتها",
-  "slug": "cheese-types-guide-supermarket",
-  "url": "https://pointmarkets.sa/blog/cheese-types-guide-supermarket/",
-  "status": "draft",
-  "date": "2026-10-11 10:00:00",
-  "focus_keyword": "أنواع الأجبان"
- },
- {
-  "title": "سناكس صحية للأطفال بعد المدرسة: 10 أفكار سريعة",
-  "slug": "healthy-kids-snacks-after-school",
-  "url": "https://pointmarkets.sa/blog/healthy-kids-snacks-after-school/",
-  "status": "draft",
-  "date": "2026-10-11 10:00:00",
-  "focus_keyword": "سناكس صحية للأطفال"
- },
- {
-  "title": "أطعمة غنية بالألياف: قائمة تسوق لترند 2026",
-  "slug": "high-fiber-foods-list",
-  "url": "https://pointmarkets.sa/blog/high-fiber-foods-list/",
-  "status": "draft",
-  "date": "2026-10-11 10:00:00",
-  "focus_keyword": "أطعمة غنية بالألياف"
- },
- {
   "title": "قائمة مشتريات غنية بالبروتين: دليل السوبرماركت",
   "slug": "high-protein-grocery-list",
   "url": "https://pointmarkets.sa/blog/high-protein-grocery-list/",
   "status": "published",
   "date": "2026-10-11 10:00:00",
   "focus_keyword": "قائمة مشتريات غنية بالبروتين"
- },
- {
-  "title": "مشروبات ترند في البيت: من الماتشا إلى شاي الكرك",
-  "slug": "matcha-trending-drinks-at-home",
-  "url": "https://pointmarkets.sa/blog/matcha-trending-drinks-at-home/",
-  "status": "draft",
-  "date": "2026-10-11 10:00:00",
-  "focus_keyword": "مشروبات ترند في البيت"
- },
- {
-  "title": "دليل أنواع التمور: كيف تختار التمر المناسب؟",
-  "slug": "saudi-dates-varieties-guide",
-  "url": "https://pointmarkets.sa/blog/saudi-dates-varieties-guide/",
-  "status": "draft",
-  "date": "2026-10-11 10:00:00",
-  "focus_keyword": "أنواع التمور"
- },
- {
-  "title": "تحضير وجبات الأسبوع بميزانية: خطة ميل بريب للعائلة",
-  "slug": "weekly-meal-prep-on-budget",
-  "url": "https://pointmarkets.sa/blog/weekly-meal-prep-on-budget/",
-  "status": "draft",
-  "date": "2026-10-11 10:00:00",
-  "focus_keyword": "تحضير وجبات الأسبوع"
- },
- {
-  "title": "شوربات الشتاء: 7 شوربات وقائمة مشترياتها",
-  "slug": "winter-soups-shopping-list",
-  "url": "https://pointmarkets.sa/blog/winter-soups-shopping-list/",
-  "status": "draft",
-  "date": "2026-10-11 10:00:00",
-  "focus_keyword": "شوربات الشتاء"
  },
  {
   "title": "دليل القهوة المختصة في البيت للمبتدئين",

@@ -1,9 +1,9 @@
 ---
 title: 'أطعمة غنية بالألياف: قائمة تسوق لترند 2026'
 slug: high-fiber-foods-list
-status: draft
-date: '2026-10-11 10:00:00'
-modified: '2026-10-11 10:00:00'
+status: published
+date: '2026-10-16 09:00:00'
+modified: '2026-10-16 09:00:00'
 category: نصائح وأدلة تسوق
 description: 'أطعمة غنية بالألياف في قائمة تسوق واحدة: الشوفان والعدس والحمص والتمر والبذور، مع طرق سهلة لإضافتها إلى الوجبات السعودية ومواكبة ترند الألياف 2026.'
 cover: /assets/img/high-fiber-foods-list.webp

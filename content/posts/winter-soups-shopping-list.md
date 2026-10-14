@@ -1,9 +1,9 @@
 ---
 title: 'شوربات الشتاء: 7 شوربات وقائمة مشترياتها'
 slug: winter-soups-shopping-list
-status: draft
-date: '2026-10-11 10:00:00'
-modified: '2026-10-11 10:00:00'
+status: published
+date: '2026-10-15 09:00:00'
+modified: '2026-10-15 09:00:00'
 category: نصائح وأدلة تسوق
 description: 'شوربات الشتاء في بيتك بسهولة: 7 شوربات مألوفة في البيت السعودي مع قائمة مشتريات كل شوربة، وجدول لوقت التحضير، ونصائح عملية للتجميد والتخزين الآمن.'
 cover: /assets/img/winter-soups-shopping-list.webp

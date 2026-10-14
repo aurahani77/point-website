@@ -1,9 +1,9 @@
 ---
 title: 'دليل أنواع الأجبان في السوبرماركت واستخداماتها'
 slug: cheese-types-guide-supermarket
-status: draft
-date: '2026-10-11 10:00:00'
-modified: '2026-10-11 10:00:00'
+status: published
+date: '2026-10-18 09:00:00'
+modified: '2026-10-18 09:00:00'
 category: نصائح وأدلة تسوق
 description: 'أنواع الأجبان في السوبرماركت كثيرة: دليل عملي للأجبان البيضاء والطرية والقريش والصلبة وأجبان الذوبان، مع استخدام كل نوع وطريقة تخزينه وقراءة ملصقه.'
 cover: /assets/img/cheese-types-guide-supermarket.webp
